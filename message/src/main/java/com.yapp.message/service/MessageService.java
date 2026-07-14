@@ -1,12 +1,15 @@
 package com.yapp.message.service;
 
 import com.yapp.message.dto.MessageDTO;
+import com.yapp.message.model.Conversation;
 import com.yapp.message.model.Message;
 import com.yapp.message.model.MessageStatus;
 import com.yapp.message.repo.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,4 +32,10 @@ public class MessageService {
                 "/topic/conversation/"+message.getConversationId(), message);
 
     }
+
+    public List<Message> findMessages(Long conversationId) {
+        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+        return messages;
+    }
+
 }
