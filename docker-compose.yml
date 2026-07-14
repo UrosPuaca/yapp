@@ -11,5 +11,18 @@ services:
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
 
+  postgres_message:
+    image: postgres:16-alpine
+    container_name: yapp-postgres-message
+    environment:
+      POSTGRES_USER: ${POSTGRES_MESSAGE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB2}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_message_data:/var/lib/postgresql/data
+
 volumes:
   postgres_auth_data:
+  postgres_message_data:
