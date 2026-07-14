@@ -17,4 +17,6 @@ public class MessageDTO {
 
     private String text;
 
+    private String imageUrl;
+
 }

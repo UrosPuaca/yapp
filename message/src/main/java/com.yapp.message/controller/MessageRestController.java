@@ -22,4 +22,10 @@ public class MessageRestController {
         List<Message> messages = messageService.findMessages(conversationId);
         return ResponseEntity.ok(messages);
     }
+
+    @GetMapping("/messages/media/{conversationId}")
+    public ResponseEntity<?> findMediaMessages(@PathVariable Long conversationId) {
+        List<Message> messages = messageService.findMedia(conversationId);
+        return ResponseEntity.ok(messages);
+    }
 }

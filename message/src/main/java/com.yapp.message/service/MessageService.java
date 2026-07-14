@@ -23,6 +23,7 @@ public class MessageService {
                 .senderId(messageDTO.getSenderId())
                 .text(messageDTO.getText())
                 .status(MessageStatus.SENT)
+                .imageUrl(messageDTO.getImageUrl())
                 .build();
 
         messageRepository.save(message);
@@ -36,6 +37,11 @@ public class MessageService {
     public List<Message> findMessages(Long conversationId) {
         List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
         return messages;
+    }
+
+
+    public List<Message> findMedia(Long conversationId) {
+        return messageRepository.findByConversationIdAndImageUrlIsNotNullOrderByCreatedAtDesc(conversationId);
     }
 
 }
