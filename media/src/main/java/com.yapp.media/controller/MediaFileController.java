@@ -12,12 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/media")
 public class MediaFileController {
 
     private final MediaFileService mediaFileService;
 
-    @PostMapping("/media")
+    @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam MultipartFile file, @RequestParam Long uploadedBy) {
         MediaFile mediaFile = mediaFileService.upload(file, uploadedBy);
         return ResponseEntity.ok(mediaFile);

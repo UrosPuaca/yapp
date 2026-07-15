@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/conversation")
 @RequiredArgsConstructor
 public class ConversationController {
 
     private final ConversationService conversationService;
 
-    @PostMapping("/conversation")
+    @PostMapping("")
     public ResponseEntity<?> findOrCreateConversation(@RequestBody ConversationRequestDTO findOrCreateConvetsationDTO) {
         Conversation conversation = conversationService.findOrCreateConversation(findOrCreateConvetsationDTO.getUser1Id(),  findOrCreateConvetsationDTO.getUser2Id());
         return ResponseEntity.ok(conversation);

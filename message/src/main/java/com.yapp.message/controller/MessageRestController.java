@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/message")
 @RequiredArgsConstructor
 public class MessageRestController {
     private final MessageService messageService;
 
-    @GetMapping("/messages/{conversationId}")
+    @GetMapping("/{conversationId}")
     public ResponseEntity<?> findMessages(@PathVariable Long conversationId) {
         List<Message> messages = messageService.findMessages(conversationId);
         return ResponseEntity.ok(messages);
     }
 
-    @GetMapping("/messages/media/{conversationId}")
+    @GetMapping("/media/{conversationId}")
     public ResponseEntity<?> findMediaMessages(@PathVariable Long conversationId) {
         List<Message> messages = messageService.findMedia(conversationId);
         return ResponseEntity.ok(messages);
