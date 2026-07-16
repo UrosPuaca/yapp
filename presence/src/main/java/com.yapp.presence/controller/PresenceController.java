@@ -26,7 +26,8 @@ public class PresenceController {
     }
 
     @GetMapping("/status/{userId}")
-    public ResponseEntity<?> getStatus(@PathVariable Long userId) {
+    public ResponseEntity<?> getStatus(@PathVariable Long userId, @RequestHeader(value = "X-User-Id", required = false) String headerUserId) {
+        System.out.println("X-User-Id iz Gateway-a: " + headerUserId);
         PresenceDTO presenceDTO = presenceService.getStatus(userId);
         return ResponseEntity.ok(presenceDTO);
     }

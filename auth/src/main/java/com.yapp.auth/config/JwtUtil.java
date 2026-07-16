@@ -1,5 +1,6 @@
 package com.yapp.auth.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import io.jsonwebtoken.security.Keys;
@@ -29,4 +30,17 @@ public class JwtUtil {
                 .signWith(getKey())
                 .compact();
     }
+
+    public Long validateAndGetUserId(String token) {
+        String subject = Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+
+        return Long.parseLong(subject);
+    }
+
+
 }

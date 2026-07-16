@@ -1,5 +1,6 @@
 package com.yapp.auth.controller;
 
+import com.yapp.auth.config.JwtUtil;
 import com.yapp.auth.dto.LoginRequestDTO;
 import com.yapp.auth.dto.LoginResponseDTO;
 import com.yapp.auth.dto.RegisterRequestDTO;
@@ -9,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,5 +40,16 @@ public class AuthController {
     }
 
 
+    @GetMapping("/validate")
+    public ResponseEntity<?> validate(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.substring(7);
+            Long userId = authService.getUserId(token);
+            return ResponseEntity.ok(userId);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+    }
 
 }

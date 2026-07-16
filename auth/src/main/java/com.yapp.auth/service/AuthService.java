@@ -49,5 +49,10 @@ public class AuthService {
         return token;
     }
 
+    public Long getUserId(String token) {
+        return jwtUtil.validateAndGetUserId(token);
+    }
+
+
 
 }
