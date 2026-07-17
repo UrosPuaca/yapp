@@ -3,7 +3,6 @@ package com.yapp.message.controller;
 import com.yapp.message.model.Message;
 import com.yapp.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +16,13 @@ public class MessageRestController {
 
     @GetMapping("/{conversationId}")
     public ResponseEntity<?> findMessages(@PathVariable Long conversationId, @RequestHeader("X-User-Id") Long userId) {
-        try {
             List<Message> messages = messageService.findMessages(conversationId, userId);
             return ResponseEntity.ok(messages);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
     }
 
     @GetMapping("/media/{conversationId}")
     public ResponseEntity<?> findMediaMessages(@PathVariable Long conversationId, @RequestHeader("X-User-Id") Long userId) {
-        try {
             List<Message> messages = messageService.findMedia(conversationId, userId);
             return ResponseEntity.ok(messages);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
     }
 }

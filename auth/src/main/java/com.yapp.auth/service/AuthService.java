@@ -3,6 +3,10 @@ package com.yapp.auth.service;
 import com.yapp.auth.config.JwtUtil;
 import com.yapp.auth.dto.LoginRequestDTO;
 import com.yapp.auth.dto.RegisterRequestDTO;
+import com.yapp.auth.exception.EmailTakenException;
+import com.yapp.auth.exception.InvalidCredentialsException;
+import com.yapp.auth.exception.UserNotFoundException;
+import com.yapp.auth.exception.UsernameTakenException;
 import com.yapp.auth.model.User;
 import com.yapp.auth.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +23,10 @@ public class AuthService {
 
     public User registerUser(RegisterRequestDTO registerRequestDTO) {
         if(userRepository.existsByUsername(registerRequestDTO.getUsername())) {
-            throw new RuntimeException("Username is already in use");
+            throw new UsernameTakenException("Username is already in use");
         }
         if(userRepository.existsByEmail(registerRequestDTO.getEmail())) {
-            throw new RuntimeException("Email is already in use");
+            throw new EmailTakenException("Email is already in use");
         }
 
         User user = User.builder()
@@ -40,10 +44,10 @@ public class AuthService {
 
     public String loginUser(LoginRequestDTO loginRequestDTO) {
         User user = userRepository.findByEmail(loginRequestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if(!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
         String token = jwtUtil.generateToken(user.getUserId());
         return token;

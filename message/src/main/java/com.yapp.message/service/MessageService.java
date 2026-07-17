@@ -1,6 +1,8 @@
 package com.yapp.message.service;
 
 import com.yapp.message.dto.MessageDTO;
+import com.yapp.message.exception.ConversationNotFoundException;
+import com.yapp.message.exception.NotParticipantException;
 import com.yapp.message.model.Conversation;
 import com.yapp.message.model.Message;
 import com.yapp.message.model.MessageStatus;
@@ -52,9 +54,9 @@ public class MessageService {
 
     private void checkParticipant(Long conversationId, Long userId) {
         Conversation c = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
         if (!c.getUser1Id().equals(userId) && !c.getUser2Id().equals(userId)) {
-            throw new RuntimeException("User doesn't belong to this conversation");
+            throw new NotParticipantException("User doesn't belong to this conversation");
         }
     }
 

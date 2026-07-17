@@ -21,22 +21,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?>register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
-        try {
             User user = authService.registerUser(registerRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("User registered");
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?>login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        try {
             String token = authService.loginUser(loginRequestDTO);
             return ResponseEntity.ok(new LoginResponseDTO(token));
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
 
