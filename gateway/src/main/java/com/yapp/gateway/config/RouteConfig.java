@@ -12,6 +12,8 @@ public class RouteConfig {
         return builder.routes()
                 .route("auth", r -> r.path("/api/auth/**")
                         .uri("http://localhost:8080"))
+                .route("user", r -> r.path("/api/user/**")
+                        .uri("http://localhost:8080"))
                 .route("message", r -> r.path("/api/message/**", ("/api/conversation/**"))
                         .uri("http://localhost:8081"))
                 .route("websocket", r -> r.path("/end-point/**")
