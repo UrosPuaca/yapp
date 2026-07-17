@@ -10,6 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConversationRequestDTO {
-    private Long user1Id;
-    private Long user2Id;
+    private Long otherUserId;
 }

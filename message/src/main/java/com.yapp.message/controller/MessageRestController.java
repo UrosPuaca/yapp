@@ -3,11 +3,9 @@ package com.yapp.message.controller;
 import com.yapp.message.model.Message;
 import com.yapp.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,14 +16,22 @@ public class MessageRestController {
     private final MessageService messageService;
 
     @GetMapping("/{conversationId}")
-    public ResponseEntity<?> findMessages(@PathVariable Long conversationId) {
-        List<Message> messages = messageService.findMessages(conversationId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<?> findMessages(@PathVariable Long conversationId, @RequestHeader("X-User-Id") Long userId) {
+        try {
+            List<Message> messages = messageService.findMessages(conversationId, userId);
+            return ResponseEntity.ok(messages);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
     }
 
     @GetMapping("/media/{conversationId}")
-    public ResponseEntity<?> findMediaMessages(@PathVariable Long conversationId) {
-        List<Message> messages = messageService.findMedia(conversationId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<?> findMediaMessages(@PathVariable Long conversationId, @RequestHeader("X-User-Id") Long userId) {
+        try {
+            List<Message> messages = messageService.findMedia(conversationId, userId);
+            return ResponseEntity.ok(messages);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
     }
 }
