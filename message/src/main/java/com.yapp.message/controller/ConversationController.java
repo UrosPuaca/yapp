@@ -20,6 +20,11 @@ public class ConversationController {
         return ResponseEntity.ok(conversation);
     }
 
+    @GetMapping("")
+    public ResponseEntity<?> getMyChats(@RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(conversationService.loadMyChats(userId));
+    }
+
 
 
 }
