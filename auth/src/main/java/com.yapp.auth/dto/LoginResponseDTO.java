@@ -1,13 +1,13 @@
 package com.yapp.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@Builder
 public class LoginResponseDTO {
     private String token;
+    private String username;
 }

@@ -2,6 +2,7 @@ package com.yapp.auth.service;
 
 import com.yapp.auth.config.JwtUtil;
 import com.yapp.auth.dto.LoginRequestDTO;
+import com.yapp.auth.dto.LoginResponseDTO;
 import com.yapp.auth.dto.RegisterRequestDTO;
 import com.yapp.auth.exception.EmailTakenException;
 import com.yapp.auth.exception.InvalidCredentialsException;
@@ -42,7 +43,7 @@ public class AuthService {
 
     }
 
-    public String loginUser(LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO) {
         User user = userRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -50,7 +51,10 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
         String token = jwtUtil.generateToken(user.getUserId());
-        return token;
+        return LoginResponseDTO.builder()
+                .token(token)
+                .username(user.getUsername())
+                .build();
     }
 
     public Long getUserId(String token) {

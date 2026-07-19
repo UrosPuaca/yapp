@@ -1,5 +1,6 @@
 package com.yapp.auth.controller;
 
+import com.yapp.auth.dto.AvatarRequestDTO;
 import com.yapp.auth.dto.PublicUserResponseDTO;
 import com.yapp.auth.dto.UserResponseDTO;
 import com.yapp.auth.service.UserService;
@@ -23,6 +24,13 @@ public class UserController {
     public ResponseEntity<?> getUser(@PathVariable Long userId) {
         PublicUserResponseDTO publicUserResponseDTO = userService.getUser(userId);
         return ResponseEntity.ok(publicUserResponseDTO);
+    }
+
+    @PutMapping("/me/avatar")
+    public ResponseEntity<?> updateAvatar(@RequestHeader("X-User-Id") Long userId,
+                                          @RequestBody AvatarRequestDTO dto) {
+        userService.setProfileImage(userId, dto.getUrl());
+        return ResponseEntity.ok().build();
     }
 
 

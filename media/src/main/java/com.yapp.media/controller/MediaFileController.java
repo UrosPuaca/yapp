@@ -17,6 +17,6 @@ public class MediaFileController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam MultipartFile file, @RequestHeader("X-User-Id") Long userId) {
         MediaFile mediaFile = mediaFileService.upload(file, Long.valueOf(userId));
-        return ResponseEntity.ok(mediaFile);
+        return ResponseEntity.ok(mediaFile.getUrl());
     }
 }

@@ -1,0 +1,14 @@
+package com.yapp.auth.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class AvatarRequestDTO {
+    private String url;
+}

@@ -2,6 +2,7 @@ package com.yapp.auth.service;
 
 import com.yapp.auth.dto.PublicUserResponseDTO;
 import com.yapp.auth.dto.UserResponseDTO;
+import com.yapp.auth.exception.UserNotFoundException;
 import com.yapp.auth.model.User;
 import com.yapp.auth.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,15 @@ public class UserService {
                 .username(user.getUsername())
                 .profileImageUrl(user.getProfileImageUrl())
                 .build();
+
+    }
+
+
+    public void setProfileImage(Long userId, String url) {
+        User u = userRepository.findById(userId)
+                .orElseThrow(()->new UserNotFoundException("User does not exist"));
+        u.setProfileImageUrl(url);
+        userRepository.save(u);
 
     }
 }
