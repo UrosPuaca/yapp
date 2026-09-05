@@ -17,7 +17,7 @@ public class RouteConfig {
                 .route("message", r -> r.path("/api/message/**", ("/api/conversation/**"))
                         .uri("http://localhost:8081"))
                 .route("websocket", r -> r.path("/end-point/**")
-                        .uri("ws://localhost:8081"))
+                        .uri("http://localhost:8081"))
                 .route("media", r -> r.path("/api/media/**")
                         .uri("http://localhost:8082"))
                 .route("presence", r -> r.path("/api/presence/**")

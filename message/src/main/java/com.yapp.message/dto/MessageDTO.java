@@ -13,8 +13,6 @@ public class MessageDTO {
 
     private Long conversationId;
 
-    private Long senderId;
-
     private String text;
 
     private String imageUrl;

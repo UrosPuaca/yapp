@@ -21,10 +21,10 @@ public class MessageService {
     private final ConversationRepository conversationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void handleMessage(MessageDTO messageDTO) {
+    public void handleMessage(MessageDTO messageDTO, Long senderId) {
         Message message = Message.builder()
                 .conversationId(messageDTO.getConversationId())
-                .senderId(messageDTO.getSenderId())
+                .senderId(senderId)
                 .text(messageDTO.getText())
                 .status(MessageStatus.SENT)
                 .imageUrl(messageDTO.getImageUrl())
