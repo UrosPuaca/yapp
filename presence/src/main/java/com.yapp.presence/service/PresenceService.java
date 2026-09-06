@@ -14,12 +14,15 @@ public class PresenceService {
     private final StringRedisTemplate redisTemplate;
 
     public void setOnline(Long userId){
+
         redisTemplate.opsForValue().set("presence:online:" + userId, "true");
+        redisTemplate.convertAndSend("presence-channel", userId + ":online");
     }
 
     public void setOffline(Long userId){
         redisTemplate.delete("presence:online:" + userId);
         redisTemplate.opsForValue().set("presence:lastseen:" + userId, LocalDateTime.now().toString());
+        redisTemplate.convertAndSend("presence-channel", userId + ":offline");
     }
 
     public PresenceDTO getStatus(Long userId){
