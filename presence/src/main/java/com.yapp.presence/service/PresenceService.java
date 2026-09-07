@@ -3,6 +3,7 @@ package com.yapp.presence.service;
 import com.yapp.presence.dto.PresenceDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,4 +40,8 @@ public class PresenceService {
     }
 
 
+    public Boolean chechStatusOfUser(Long userId) {
+        return redisTemplate.hasKey("presence:online:" + userId);
+
+    }
 }

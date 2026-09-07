@@ -32,6 +32,10 @@ public class PresenceController {
         return ResponseEntity.ok(presenceDTO);
     }
 
+    @GetMapping("/chech/status/{userId}")
+    public Boolean checkStatus(@PathVariable Long userId) {
+        return presenceService.chechStatusOfUser(userId);
+    }
 
 
 }
