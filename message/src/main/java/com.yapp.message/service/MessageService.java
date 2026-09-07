@@ -9,6 +9,8 @@ import com.yapp.message.model.MessageStatus;
 import com.yapp.message.repo.ConversationRepository;
 import com.yapp.message.repo.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +40,16 @@ public class MessageService {
 
     }
 
-    public List<Message> findMessages(Long conversationId, Long userId) {
+    public List<Message> findMessages(Long conversationId, Long userId, Long before, int size) {
         checkParticipant(conversationId, userId);
 
-        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+        if(before == null) {
+            before = Long.MAX_VALUE;
+        }
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        List<Message> messages = messageRepository.findByConversationIdAndIdLessThanOrderByIdDesc(conversationId, before, pageRequest);
         return messages;
     }
 

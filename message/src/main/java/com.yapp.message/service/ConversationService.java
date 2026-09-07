@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -51,9 +52,12 @@ public class ConversationService {
 
             Message m = messageRepository.findFirstByConversationIdOrderByCreatedAtDesc(c.getId())
                     .orElse(null);
+
             if (m != null) {
-                dto.setLastMessage(m.getText());
+                dto.setLastMessage(m.getText() == null ? "image" : m.getText());
                 dto.setLastMessageTime(m.getCreatedAt());
+            } else {
+                dto.setLastMessageTime(c.getCreatedAt());
             }
 
 
@@ -72,6 +76,7 @@ public class ConversationService {
 
             result.add(dto);
         }
+        result.sort(Comparator.comparing(MyChatDTO::getLastMessageTime).reversed());
         return result;
     }
 

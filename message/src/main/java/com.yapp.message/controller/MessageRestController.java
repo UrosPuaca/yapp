@@ -15,8 +15,8 @@ public class MessageRestController {
     private final MessageService messageService;
 
     @GetMapping("/{conversationId}")
-    public ResponseEntity<?> findMessages(@PathVariable Long conversationId, @RequestHeader("X-User-Id") Long userId) {
-            List<Message> messages = messageService.findMessages(conversationId, userId);
+    public ResponseEntity<?> findMessages(@PathVariable Long conversationId, @RequestParam(required = false ) Long before,@RequestHeader("X-User-Id") Long userId) {
+            List<Message> messages = messageService.findMessages(conversationId, userId, before, 20);
             return ResponseEntity.ok(messages);
     }
 
