@@ -16,5 +16,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findMessagesByConversationIdInAndStatusAndSenderIdNot(List<Long> conversationIds, MessageStatus messageStatus, Long senderId);
 
+    List<Message> findMessagesByConversationIdAndStatusNotAndSenderIdNot(Long conversationId, MessageStatus messageStatus, Long senderId);
 
 }

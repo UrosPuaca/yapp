@@ -2,6 +2,8 @@ package com.yapp.message.controller;
 
 import com.yapp.message.config.AuthChannelInterceptor;
 import com.yapp.message.dto.MessageDTO;
+import com.yapp.message.dto.MessageSeenDTO;
+import com.yapp.message.model.Conversation;
 import com.yapp.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,6 +23,13 @@ public class MessageController {
         Long senderId = Long.valueOf(principal.getName());
         messageService.handleMessage(messageDTO, senderId);
     }
+
+    @MessageMapping("/message/seen")
+    public void seenMessage(MessageSeenDTO messageSeenDTO, Principal principal) {
+        Long userId = Long.valueOf(principal.getName());
+        messageService.messageStatusSeen(messageSeenDTO.getConversationId(), userId);
+    }
+
 
 
 

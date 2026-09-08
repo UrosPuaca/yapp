@@ -78,6 +78,7 @@ public class MessageService {
         checkParticipant(conversationId, userId);
 
         if(before == null) {
+            messageStatusSeen(conversationId, userId);
             before = Long.MAX_VALUE;
         }
 
@@ -130,5 +131,29 @@ public class MessageService {
 
         return messages;
     }
+
+    @Transactional
+    public List<Message> messageStatusSeen(Long conversationId, Long userId) {
+        checkParticipant(conversationId, userId);
+
+        List<Message> messages = messageRepository.findMessagesByConversationIdAndStatusNotAndSenderIdNot(conversationId, MessageStatus.SEEN, userId);
+
+        if(messages.isEmpty()){return messages;}
+
+        for(Message m : messages){
+            m.setStatus(MessageStatus.SEEN);
+        }
+        messageRepository.saveAll(messages);
+
+        MessageStatusDTO dto = new MessageStatusDTO(conversationId, messages.stream().map(Message::getId).toList(), MessageStatus.SEEN);
+
+        messagingTemplate.convertAndSend("/topic/conversation/"+conversationId+"/status", dto);
+
+
+        return messages;
+    }
+
+
+
 
 }
