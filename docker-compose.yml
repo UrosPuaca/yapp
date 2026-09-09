@@ -46,3 +46,4 @@ volumes:
   postgres_auth_data:
   postgres_message_data:
   postgres_media_data:
+  redis:

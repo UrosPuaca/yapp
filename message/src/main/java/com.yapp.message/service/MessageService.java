@@ -2,6 +2,7 @@ package com.yapp.message.service;
 
 import com.yapp.message.dto.MessageDTO;
 import com.yapp.message.dto.MessageStatusDTO;
+import com.yapp.message.dto.MessageTypingDTO;
 import com.yapp.message.exception.ConversationNotFoundException;
 import com.yapp.message.exception.NotParticipantException;
 import com.yapp.message.model.Conversation;
@@ -154,6 +155,10 @@ public class MessageService {
     }
 
 
+    public void userTyping(MessageTypingDTO messageTypingDTO) {
+        checkParticipant(messageTypingDTO.getConversationId(), messageTypingDTO.getUserId());
 
+        messagingTemplate.convertAndSend("/topic/conversation/"+messageTypingDTO.getConversationId()+"/typing", messageTypingDTO);
 
+    }
 }
