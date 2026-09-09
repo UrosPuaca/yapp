@@ -2,11 +2,14 @@ package com.yapp.auth.controller;
 
 import com.yapp.auth.dto.AvatarRequestDTO;
 import com.yapp.auth.dto.PublicUserResponseDTO;
+import com.yapp.auth.dto.SearchUserDTO;
 import com.yapp.auth.dto.UserResponseDTO;
 import com.yapp.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,6 +36,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearch(@RequestHeader("X-User-Id") Long userId,
+                                       @RequestParam String query) {
+        List<SearchUserDTO> users = userService.searchUser(query, userId);
+        return ResponseEntity.ok().body(users);
+    }
 
 
 
