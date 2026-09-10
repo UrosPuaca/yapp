@@ -8,6 +8,7 @@ import com.yapp.message.exception.NotParticipantException;
 import com.yapp.message.model.Conversation;
 import com.yapp.message.model.Message;
 import com.yapp.message.model.MessageStatus;
+import com.yapp.message.rateLimiter.TokenBucket;
 import com.yapp.message.repo.ConversationRepository;
 import com.yapp.message.repo.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,20 @@ public class MessageService {
     private final ConversationRepository conversationRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final RestClient restClient;
+    private final TokenBucket tokenBucket;
 
     @Value("${presence.service.url}")
     private String presenceServiceUrl;
 
     public void handleMessage(MessageDTO messageDTO, Long senderId) {
+
+        if(!tokenBucket.isAllowed(senderId)){
+            return;
+        }
+
+
+
+
         MessageStatus messageStatus = MessageStatus.SENT;
 
         Conversation c = checkParticipant(messageDTO.getConversationId(),  senderId);
