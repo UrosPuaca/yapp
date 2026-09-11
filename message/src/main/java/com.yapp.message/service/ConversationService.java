@@ -4,6 +4,7 @@ import com.yapp.message.dto.MyChatDTO;
 import com.yapp.message.dto.MyChatUserResponseDTO;
 import com.yapp.message.model.Conversation;
 import com.yapp.message.model.Message;
+import com.yapp.message.model.MessageStatus;
 import com.yapp.message.repo.ConversationRepository;
 import com.yapp.message.repo.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,11 @@ public class ConversationService {
         List<Conversation> conversations = conversationRepository.findByUser1IdOrUser2Id(userId, userId);
         List<MyChatDTO> result = new ArrayList<>();
 
+        List<Long> conversationIds = conversations.stream().map(Conversation::getId).toList();
+        List<Message> unreadMessages = messageRepository.findMessagesByConversationIdInAndStatusNotAndSenderIdNot(conversationIds, MessageStatus.SEEN, userId);
+
+        Map<Long, List<Message>> unreadMap = unreadMessages.stream().collect(Collectors.groupingBy(Message::getConversationId));
+
         for (Conversation c : conversations) {
             MyChatDTO dto = new MyChatDTO();
             dto.setConversationId(c.getId());
@@ -52,6 +60,7 @@ public class ConversationService {
 
             Message m = messageRepository.findFirstByConversationIdOrderByCreatedAtDesc(c.getId())
                     .orElse(null);
+
 
             if (m != null) {
                 dto.setLastMessage(m.getText() == null ? "image" : m.getText());
@@ -72,6 +81,9 @@ public class ConversationService {
                 dto.setUsername("Unknown");
                 // profileImageUrl ostaje null
             }
+
+            dto.setUnreadCount(unreadMap.getOrDefault(c.getId(), List.of()).size());
+
 
 
             result.add(dto);

@@ -11,9 +11,16 @@ import java.util.Date;
 @Builder
 public class MyChatDTO {
     private Long conversationId;
+
     private Long otherUserId;
+
     private String username;
+
     private String profileImageUrl;
+
     private String lastMessage;
+
     private Date lastMessageTime;
+
+    private int unreadCount;
 }
