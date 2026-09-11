@@ -40,5 +40,14 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
 
+    @Column(nullable = true)
+    private Long replyToMessageId;
+
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String replyToText;
+
+    @Column(nullable = true)
+    private Long replyToSenderId;
+
 
 }

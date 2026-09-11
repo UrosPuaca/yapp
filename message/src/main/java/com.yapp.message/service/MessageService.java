@@ -67,15 +67,38 @@ public class MessageService {
             log.warn("Presence nedostupan za korisnika {}, poruka ostaje SENT: {}", receiverId, e.getMessage());
         }
 
+        Message message;
+
+        if(messageDTO.getReplyToMessageId() != null) {
+            Message m = messageRepository.findById(messageDTO.getReplyToMessageId())
+                    .orElseThrow(() -> new RuntimeException("Message not found"));
 
 
-        Message message = Message.builder()
-                .conversationId(messageDTO.getConversationId())
-                .senderId(senderId)
-                .text(messageDTO.getText())
-                .status(messageStatus)
-                .imageUrl(messageDTO.getImageUrl())
-                .build();
+            if (!m.getConversationId().equals(messageDTO.getConversationId())) {
+                throw new RuntimeException("Does not belong to conversation");
+            }
+
+
+            message = Message.builder()
+                    .conversationId(messageDTO.getConversationId())
+                    .senderId(senderId)
+                    .text(messageDTO.getText())
+                    .status(messageStatus)
+                    .imageUrl(messageDTO.getImageUrl())
+                    .replyToMessageId(m.getId())
+                    .replyToText(m.getText())
+                    .replyToSenderId(m.getSenderId())
+                    .build();
+        }else{
+            message = Message.builder()
+                    .conversationId(messageDTO.getConversationId())
+                    .senderId(senderId)
+                    .text(messageDTO.getText())
+                    .status(messageStatus)
+                    .imageUrl(messageDTO.getImageUrl())
+                    .build();
+        }
+
 
         messageRepository.save(message);
 
