@@ -1,11 +1,8 @@
 package com.yapp.message.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
-
 import java.util.Date;
 
 @Setter

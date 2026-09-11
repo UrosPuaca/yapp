@@ -1,15 +1,12 @@
 package com.yapp.message.service;
 
-import com.yapp.message.dto.MessageDTO;
-import com.yapp.message.dto.MessageStatusDTO;
-import com.yapp.message.dto.MessageTypingDTO;
+import com.yapp.message.dto.*;
 import com.yapp.message.exception.ConversationNotFoundException;
 import com.yapp.message.exception.NotParticipantException;
-import com.yapp.message.model.Conversation;
-import com.yapp.message.model.Message;
-import com.yapp.message.model.MessageStatus;
+import com.yapp.message.model.*;
 import com.yapp.message.rateLimiter.TokenBucket;
 import com.yapp.message.repo.ConversationRepository;
+import com.yapp.message.repo.MessageReactionRepository;
 import com.yapp.message.repo.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +32,7 @@ public class MessageService {
     private final SimpMessagingTemplate messagingTemplate;
     private final RestClient restClient;
     private final TokenBucket tokenBucket;
+    private final MessageReactionRepository messageReactionRepository;
 
     @Value("${presence.service.url}")
     private String presenceServiceUrl;
@@ -44,8 +42,6 @@ public class MessageService {
         if(!tokenBucket.isAllowed(senderId)){
             return;
         }
-
-
 
 
         MessageStatus messageStatus = MessageStatus.SENT;
@@ -102,13 +98,14 @@ public class MessageService {
 
         messageRepository.save(message);
 
+        MessageResponseDTO dto = messageToDTO(message, List.of());
 
         messagingTemplate.convertAndSend(
-                "/topic/conversation/"+message.getConversationId(), message);
+                "/topic/conversation/"+message.getConversationId(), dto);
 
     }
 
-    public List<Message> findMessages(Long conversationId, Long userId, Long before, int size) {
+    public List<MessageResponseDTO> findMessages(Long conversationId, Long userId, Long before, int size) {
         checkParticipant(conversationId, userId);
 
         if(before == null) {
@@ -119,7 +116,49 @@ public class MessageService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         List<Message> messages = messageRepository.findByConversationIdAndIdLessThanOrderByIdDesc(conversationId, before, pageRequest);
-        return messages;
+        List<Long> messageIds = messages.stream().map(Message::getId).toList();
+        List<MessageReaction>  messageReactions = messageReactionRepository.findByMessageIdIn(messageIds);
+        Map<Long, List<MessageReaction>> map = messageReactions.stream().collect(Collectors.groupingBy(MessageReaction::getMessageId));
+        List<MessageResponseDTO> results = new ArrayList<>();
+
+        for(Message m : messages) {
+            List<MessageReaction> reactions = map.getOrDefault(m.getId(), List.of());
+
+            List<ReactionDTO> reactionDTOs = new ArrayList<>();
+
+            for (MessageReaction r : reactions) {
+                ReactionDTO reactionDTO = ReactionDTO.builder()
+                        .reactionType(r.getReactionType())
+                        .messageId(r.getMessageId())
+                        .userId(r.getUserId())
+                        .build();
+                reactionDTOs.add(reactionDTO);
+            }
+
+            results.add(messageToDTO(m,  reactionDTOs));
+
+        }
+        return results;
+
+    }
+
+    private MessageResponseDTO messageToDTO(Message m, List<ReactionDTO> reactionDTOs) {
+            MessageResponseDTO dto = MessageResponseDTO.builder()
+                    .id(m.getId())
+                    .createdAt(m.getCreatedAt())
+                    .conversationId(m.getConversationId())
+                    .imageUrl(m.getImageUrl())
+                    .status(m.getStatus())
+                    .text(m.getText())
+                    .senderId(m.getSenderId())
+                    .replyToMessageId(m.getReplyToMessageId())
+                    .replyToSenderId(m.getReplyToSenderId())
+                    .replyToText(m.getReplyToText())
+                    .reactions(reactionDTOs)
+                    .build();
+
+        return dto;
+
     }
 
 
@@ -194,4 +233,46 @@ public class MessageService {
         messagingTemplate.convertAndSend("/topic/conversation/"+messageTypingDTO.getConversationId()+"/typing", messageTypingDTO);
 
     }
+
+
+    @Transactional
+    public void handleMessageReaction(ReactionDTO reactionDTO, Long userId) {
+        Message m = messageRepository.findById(reactionDTO.getMessageId())
+                .orElseThrow(()->new RuntimeException("Message not found"));
+
+        checkParticipant(m.getConversationId(), userId);
+
+
+        MessageReaction reaction = messageReactionRepository.findByMessageIdAndUserId(m.getId(), userId)
+                .orElse(null);
+
+
+        if(reaction == null){
+            reaction = createReaction(m.getId(), userId, reactionDTO.getReactionType());
+        }else if(reaction.getReactionType() == reactionDTO.getReactionType()){
+            messageReactionRepository.delete(reaction);
+            reactionDTO.setReactionType(null);
+        }else{
+            reaction.setReactionType(reactionDTO.getReactionType());
+            messageReactionRepository.save(reaction);
+        }
+
+        reactionDTO.setUserId(userId);
+
+        messagingTemplate.convertAndSend("/topic/conversation/"+m.getConversationId()+"/reaction", reactionDTO);
+
+
+    }
+
+
+    private MessageReaction createReaction(Long messageId, Long userId, ReactionType reactionType) {
+        MessageReaction reaction = MessageReaction.builder()
+                .reactionType(reactionType)
+                .userId(userId)
+                .messageId(messageId)
+                .build();
+        return messageReactionRepository.save(reaction);
+    }
+
+
 }

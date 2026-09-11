@@ -1,5 +1,6 @@
 package com.yapp.message.controller;
 
+import com.yapp.message.dto.MessageResponseDTO;
 import com.yapp.message.model.Message;
 import com.yapp.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class MessageRestController {
 
     @GetMapping("/{conversationId}")
     public ResponseEntity<?> findMessages(@PathVariable Long conversationId, @RequestParam(required = false ) Long before,@RequestHeader("X-User-Id") Long userId) {
-            List<Message> messages = messageService.findMessages(conversationId, userId, before, 20);
+            List<MessageResponseDTO> messages = messageService.findMessages(conversationId, userId, before, 20);
             return ResponseEntity.ok(messages);
     }
 
@@ -25,4 +26,10 @@ public class MessageRestController {
             List<Message> messages = messageService.findMedia(conversationId, userId);
             return ResponseEntity.ok(messages);
     }
+
+
+
+
+
+
 }

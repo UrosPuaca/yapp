@@ -4,6 +4,7 @@ import com.yapp.message.config.AuthChannelInterceptor;
 import com.yapp.message.dto.MessageDTO;
 import com.yapp.message.dto.MessageSeenDTO;
 import com.yapp.message.dto.MessageTypingDTO;
+import com.yapp.message.dto.ReactionDTO;
 import com.yapp.message.model.Conversation;
 import com.yapp.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,13 @@ public class MessageController {
         messageTypingDTO.setUserId(userId);
         messageService.userTyping(messageTypingDTO);
     }
+
+    @MessageMapping("/message/reaction")
+    public void messageReaction(ReactionDTO reactionDTO, Principal principal){
+        Long userId = Long.valueOf(principal.getName());
+        messageService.handleMessageReaction(reactionDTO, userId);
+    }
+
 
 
 
