@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_AUTH} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   postgres_message:
     image: postgres:16-alpine
@@ -22,6 +27,11 @@ services:
       - "5434:5432"
     volumes:
       - postgres_message_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_MESSAGE} -d ${POSTGRES_DB2}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   postgres_media:
     image: postgres:16-alpine
@@ -34,6 +44,11 @@ services:
       - "5435:5432"
     volumes:
       - postgres_media_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_MEDIA} -d ${POSTGRES_DB3}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -41,9 +56,100 @@ services:
     command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  auth:
+    build: ./auth
+    container_name: yapp-auth
+    depends_on:
+      postgres_user:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres_user
+      DB_PORT: 5432
+      POSTGRES_AUTH: ${POSTGRES_AUTH}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+
+  message:
+    build: ./message
+    container_name: yapp-message
+    depends_on:
+      postgres_message:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres_message
+      DB_PORT: 5432
+      POSTGRES_MESSAGE: ${POSTGRES_MESSAGE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB2: ${POSTGRES_DB2}
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      AUTH_SERVICE_URL: http://auth:8080
+      PRESENCE_SERVICE_URL: http://presence:8083
+    ports:
+      - "8081:8081"
+
+  media:
+    build: ./media
+    container_name: yapp-media
+    depends_on:
+      postgres_media:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres_media
+      DB_PORT: 5432
+      POSTGRES_MEDIA: ${POSTGRES_MEDIA}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB3: ${POSTGRES_DB3}
+      CLOUDINARY_NAME: ${CLOUDINARY_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    ports:
+      - "8082:8082"
+
+  presence:
+    build: ./presence
+    container_name: yapp-presence
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "8083:8083"
+
+  gateway:
+    build: ./gateway
+    container_name: yapp-gateway
+    depends_on:
+      - auth
+      - message
+      - media
+      - presence
+    environment:
+      AUTH_SERVICE_URL: http://auth:8080
+      MESSAGE_SERVICE_URL: http://message:8081
+      MEDIA_SERVICE_URL: http://media:8082
+      PRESENCE_SERVICE_URL: http://presence:8083
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    ports:
+      - "8090:8090"
 
 volumes:
   postgres_auth_data:
   postgres_message_data:
   postgres_media_data:
-  redis:
+  redis_data:

@@ -1,6 +1,7 @@
 package com.yapp.gateway.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter implements GlobalFilter {
+
+    @Value("${auth.service.url}")
+    private String authServiceUrl;
 
     private final WebClient webClient;
 
@@ -30,7 +34,7 @@ public class JwtFilter implements GlobalFilter {
         }
 
         return webClient.get()
-                .uri("http://localhost:8080/api/auth/validate")
+                .uri( authServiceUrl+"/api/auth/validate")
                 .header("Authorization", authHeader)
                 .retrieve()
                 .bodyToMono(Long.class)
