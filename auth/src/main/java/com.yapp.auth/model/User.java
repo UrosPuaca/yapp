@@ -6,8 +6,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
-@Builder
+
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

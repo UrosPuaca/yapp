@@ -15,7 +15,6 @@ public class PresenceService {
     private final StringRedisTemplate redisTemplate;
 
     public void setOnline(Long userId){
-
         redisTemplate.opsForValue().set("presence:online:" + userId, "true");
         redisTemplate.convertAndSend("presence-channel", userId + ":online");
     }

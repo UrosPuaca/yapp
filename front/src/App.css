@@ -1,0 +1,18 @@
+.appBody {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Desna strana kad korisnik jos nema nijedan razgovor */
+.chatEmpty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  letter-spacing: 0.0625rem;
+  opacity: 0.5;
+  background: var(--bg-window);
+}

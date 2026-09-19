@@ -1,0 +1,126 @@
+/* Omotac oko mehurica — nosi max-width i sluzi kao sidro za birac */
+.bubbleWrap {
+  position: relative;
+  max-width: 62%;
+}
+
+/* --- Birac na hover --- */
+
+.reactionBar {
+  position: absolute;
+  top: 100%;
+  /* Providan padding umesto margine: pokazivac ne prolazi kroz "rupu"
+     izmedju mehurica i panela, pa hover ne pukne na pola puta. */
+  padding-top: 0.375rem;
+  display: none;
+  z-index: 5;
+}
+
+.msgRow-them .reactionBar {
+  left: 0;
+}
+
+.msgRow-me .reactionBar {
+  right: 0;
+}
+
+.bubbleWrap:hover .reactionBar {
+  display: block;
+}
+
+.reactionPanel {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  background: var(--bg-panel);
+  border: var(--border-thin);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-bubble);
+}
+
+.reactionSep {
+  width: 0.0625rem;
+  align-self: stretch;
+  margin: 0 0.125rem;
+  background: var(--accent);
+  opacity: 0.4;
+}
+
+.reactionBtn {
+  background: none;
+  border: var(--border-thin);
+  border-color: transparent;
+  padding: 0.1875rem;
+  cursor: pointer;
+  line-height: 0;
+  /* Dugme NE nasledjuje boju teksta samo od sebe — bez ovoga bi ikonica
+     koja koristi currentColor (reply strelica) bila crna na tamnom panelu. */
+  color: var(--text-primary);
+}
+
+.reactionBtn:hover {
+  color: var(--accent);
+}
+
+.reactionBtn:hover {
+  background: var(--bg-item-active);
+  /* Skok od 2px umesto glatke animacije — u duhu piksel teme */
+  transform: translateY(-0.125rem);
+}
+
+.reactionBtn-active {
+  border-color: var(--accent);
+  background: var(--bg-item-active);
+}
+
+/* --- Cip ispod poruke --- */
+
+.reactionChips {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.msgRow-me .reactionChips {
+  justify-content: flex-end;
+}
+
+.reactionChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem;
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border: var(--border-thin);
+  border-color: var(--accent);
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+/* Cip je dugme — klik na njega dodaje ili sklanja moju reakciju */
+.reactionChip {
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+/* Moja reakcija se izdvaja punim okvirom */
+.reactionChip-mine {
+  background: var(--bg-item-active);
+  border-color: var(--accent);
+}
+
+/* Broj se pojavljuje tek kad je vise od jedne iste reakcije */
+.reactionCount {
+  margin-left: 0.25rem;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+}
+
+/* Nema mesta ispod — panel se okrece iznad poruke */
+.bubbleWrap-flip .reactionBar {
+  top: auto;
+  bottom: 100%;
+  padding-top: 0;
+  padding-bottom: 0.375rem;
+}

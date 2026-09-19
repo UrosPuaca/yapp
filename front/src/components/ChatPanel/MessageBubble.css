@@ -1,0 +1,150 @@
+.msgRow {
+  display: flex;
+}
+
+.msgRow-me {
+  justify-content: flex-end;
+}
+
+.msgRow-them {
+  justify-content: flex-start;
+}
+
+.bubble {
+  /* max-width je presao na .bubbleWrap, koji je sidro za birac reakcija */
+  max-width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: var(--border-thin);
+  box-shadow: var(--shadow-bubble);
+}
+
+.bubble-them {
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.bubble-me {
+  background: var(--bubble-me-bg);
+  color: var(--bg-window);
+}
+
+.bubbleTxt {
+  font-size: 1.1875rem;
+  margin: 0;
+  line-height: 1.25;
+  word-wrap: break-word;
+}
+
+.bubbleMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.3125rem;
+  margin-top: 0.25rem;
+}
+
+/* Moje poruke su desno poravnate, pa vreme + kvacica idu uz desnu ivicu */
+.msgRow-me .bubbleMeta {
+  justify-content: flex-end;
+}
+
+.bubbleTime {
+  font-size: 0.6875rem;
+  font-family: var(--font-pixel);
+  opacity: 0.7;
+}
+
+/* Loptice statusa poruke */
+.msgDots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  flex-shrink: 0;
+}
+
+.msgDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5; /* siva: prati boju teksta u bubble-u */
+}
+
+/* SENT — samo jedna loptica, druga drzi mesto da se vreme ne pomera */
+.msgDots-sent .msgDot:last-child {
+  visibility: hidden;
+}
+
+/* SEEN — obe plave */
+.msgDots-seen .msgDot {
+  background: var(--msg-seen);
+  opacity: 1;
+}
+
+/* Slika u poruci */
+.bubbleImg {
+  display: block;
+  max-width: 100%;
+  max-height: 14rem;
+  border: var(--border-thin);
+}
+
+/* Fajl u poruci */
+.fileMsg {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 1.1875rem;
+  min-width: 0;
+}
+
+.fileTag {
+  font-family: var(--font-pixel);
+  font-size: 0.625rem;
+}
+
+.fileLink {
+  color: inherit;
+  text-decoration: underline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSize {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Voice poruka */
+.voiceMsg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.voiceBtn {
+  font-family: var(--font-pixel);
+  font-size: 0.6875rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: var(--border-thin);
+  cursor: pointer;
+  background: var(--black);
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.voiceBars {
+  font-family: var(--font-retro);
+  font-size: 1.1875rem;
+  letter-spacing: 0.125rem;
+  opacity: 0.8;
+}
+
+.voiceDur {
+  font-family: var(--font-pixel);
+  font-size: 0.625rem;
+}

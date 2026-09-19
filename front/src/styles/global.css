@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Proporcionalno skaliranje: dizajn je rađen na 580px visine sa osnovom 16px.
+   1rem = 16px kada je prozor visok 580px, i raste srazmerno visini ekrana. */
+html {
+  font-size: max(12px, calc(100vh / 36.25));
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #05050a;
+  color: var(--text-primary);
+  font-family: var(--font-retro);
+}

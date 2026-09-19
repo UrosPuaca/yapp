@@ -148,6 +148,15 @@ services:
     ports:
       - "8090:8090"
 
+
+  frontend:
+    build: ./front
+    container_name: yapp-frontend
+    depends_on:
+      - gateway
+    ports:
+      - "5173:80"
+
 volumes:
   postgres_auth_data:
   postgres_message_data:

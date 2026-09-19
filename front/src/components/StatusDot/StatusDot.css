@@ -1,0 +1,18 @@
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex-shrink: 0;
+  border: 0.0625rem solid var(--black);
+}
+
+.dot-online {
+  background: var(--status-online);
+}
+
+.dot-away {
+  background: var(--status-away);
+}
+
+.dot-offline {
+  background: var(--status-offline);
+}

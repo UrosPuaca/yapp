@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Special+Elite&family=M+PLUS+Rounded+1c:wght@400;500;700&family=Dela+Gothic+One&family=Yuji+Syuku&family=UnifrakturMaguntia&family=Caveat:wght@500;700&display=swap"><meta name="design_doc_mode" content="canvas"><style>
+.turnLabel{font-family:'Press Start 2P',monospace;font-size:13px;color:#8a8a9a;margin-bottom:16px}
+body{margin:0;background:#05050a;color:#e8e4f0;font-family:'VT323',monospace}
+a{color:#2be8ff}a:hover{color:#ff2fb0}
+.stage{padding:64px;min-height:100vh;box-sizing:border-box}
+.row{display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start}
+.optWrap{display:flex;flex-direction:column;gap:14px}
+.badge{font-family:'Press Start 2P',monospace;font-size:12px;color:#fff;background:#000;border:2px solid #ff2fb0;padding:6px 10px;width:fit-content;letter-spacing:1px}
+.window{width:820px;height:580px;display:flex;flex-direction:column;position:relative;overflow:hidden;border:4px solid #000;box-shadow:8px 8px 0 #000,14px 14px 0 rgba(0,0,0,.35)}
+.scanlines{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.06) 0px,rgba(255,255,255,.06) 1px,transparent 1px,transparent 3px);mix-blend-mode:overlay;z-index:5}
+.titlebar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:4px solid #000;font-family:'Press Start 2P',monospace;font-size:11px;flex-shrink:0}
+.ctrls{display:flex;gap:6px}
+.ctrlDot{width:10px;height:10px;border:2px solid #000}
+.titleText{flex:1;letter-spacing:1px}
+.tag{font-size:10px;opacity:.8}
+.skyline{display:flex;align-items:flex-end;gap:2px;height:34px;padding:0 10px;flex-shrink:0;border-bottom:4px solid #000}
+.bld{flex:1;opacity:.85}
+.bld:nth-child(3n+1){height:40%}
+.bld:nth-child(3n+2){height:78%}
+.bld:nth-child(3n){height:58%}
+.body{display:flex;flex:1;min-height:0}
+.sidebar{width:220px;flex-shrink:0;overflow-y:auto;border-right:4px solid #000}
+.sideHead{font-family:'Press Start 2P',monospace;font-size:10px;padding:10px;letter-spacing:1px;border-bottom:2px solid #000}
+.convItem{display:flex;align-items:center;gap:8px;padding:10px;cursor:pointer;border-bottom:2px solid rgba(0,0,0,.4)}
+.convText{flex:1;min-width:0}
+.convName{font-size:16px;line-height:1.1}
+.convPrev{font-size:13px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.convTime{font-size:11px;opacity:.6;font-family:'Press Start 2P',monospace}
+.avatar{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:13px;border:2px solid #000}
+.dot{width:8px;height:8px;flex-shrink:0;border:1px solid #000}
+.chat{flex:1;display:flex;flex-direction:column;min-height:0}
+.chatHeader{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:2px solid #000;flex-shrink:0}
+.chatHeaderText{display:flex;flex-direction:column;gap:2px}
+.chatName{font-family:'Press Start 2P',monospace;font-size:12px}
+.chatStatus{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.75}
+.thread{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msgRow{display:flex}
+.msgRow-me{justify-content:flex-end}
+.msgRow-them{justify-content:flex-start}
+.bubble{max-width:62%;padding:10px 12px;border:2px solid #000;box-shadow:4px 4px 0 #000}
+.bubbleTxt{font-size:19px;margin:0;line-height:1.25;word-wrap:break-word}
+.bubbleTime{display:block;font-size:11px;margin-top:4px;font-family:'Press Start 2P',monospace;opacity:.7}
+.inputRow{display:flex;gap:8px;padding:10px;border-top:4px solid #000;flex-shrink:0}
+.textInput{flex:1;font-family:'VT323',monospace;font-size:18px;padding:8px 10px;border:2px solid #000;outline:none;background:#000}
+.sendBtn{font-family:'Press Start 2P',monospace;font-size:11px;padding:0 16px;border:2px solid #000;cursor:pointer;box-shadow:3px 3px 0 #000}
+.sendBtn:active{box-shadow:none;transform:translate(3px,3px)}
+.win-a{background:#2c0a17;color:#d9c48f}
+.win-a .titlebar{background:#3a0f1f;border-bottom-color:#b8934a}
+.win-a .ctrlDot{background:#d9c48f;border-color:#000}
+.win-a .tag{color:#d9c48f}
+.win-a .bld{background:#b8934a}
+.win-a .bld:nth-child(3n){background:#8a6a2f}
+.win-a .skyline{background:#3a0f1f}
+.win-a .sidebar{background:#3a0f1f}
+.win-a .sideHead{color:#d9c48f}
+.win-a .convItem-active{background:#4a1526}
+.win-a .avatar{background:#d9c48f;color:#2c0a17}
+.win-a .dot-online{background:#3ddc73}
+.win-a .dot-away{background:#e8c547}
+.win-a .dot-offline{background:#7a7a7a}
+.win-a .chatHeader{background:#3a0f1f}
+.win-a .thread{background:#2c0a17}
+.win-a .bubble-them{background:#3a0f1f;color:#d9c48f;border-color:#b8934a}
+.win-a .bubble-me{background:#d9c48f;color:#2c0a17;border-color:#2c0a17}
+.win-a .inputRow{background:#3a0f1f}
+.win-a .textInput{color:#d9c48f;border-color:#b8934a;background:#2c0a17}
+.win-a .sendBtn{background:transparent;color:#3ddc73;border-color:#3ddc73}
+.win-b{background:#03110a;color:#35ff6b}
+.win-b .titlebar{background:#04180d;border-bottom-color:#35ff6b}
+.win-b .ctrlDot{background:#35ff6b}
+.win-b .tag{color:#35ff6b}
+.win-b .bld{background:#35ff6b}
+.win-b .skyline{background:#04180d}
+.win-b .sidebar{background:#03130b}
+.win-b .sideHead{color:#35ff6b}
+.win-b .convItem{border-bottom-color:rgba(53,255,107,.25)}
+.win-b .convItem-active{background:#0a2415}
+.win-b .avatar{background:#03110a;color:#35ff6b;border-color:#35ff6b}
+.win-b .dot-online{background:#35ff6b}
+.win-b .dot-away{background:#a8ff35}
+.win-b .dot-offline{background:#0f3a20}
+.win-b .chatHeader{background:#04180d}
+.win-b .thread{background:#03110a}
+.win-b .bubble-them{background:transparent;color:#35ff6b;border-color:#35ff6b;box-shadow:none}
+.win-b .bubble-me{background:#35ff6b;color:#03110a}
+.win-b .inputRow{background:#04180d}
+.win-b .textInput{color:#35ff6b;border-color:#35ff6b}
+.win-b .sendBtn{background:#35ff6b;color:#03110a}
+.win-c{background:#1a1330;color:#f1e9ff}
+.win-c .titlebar{background:#2a1c48;border-bottom-color:#3fe0c5}
+.win-c .ctrlDot{background:#ff8fd0}
+.win-c .tag{color:#3fe0c5}
+.win-c .bld{background:#3fe0c5}
+.win-c .bld:nth-child(3n+2){background:#ff8fd0}
+.win-c .skyline{background:#241a3f}
+.win-c .sidebar{background:#221a3d}
+.win-c .sideHead{color:#3fe0c5}
+.win-c .convItem-active{background:#33255a}
+.win-c .avatar{background:#ff8fd0;color:#1a1330}
+.win-c .dot-online{background:#3fe0c5}
+.win-c .dot-away{background:#ffce54}
+.win-c .dot-offline{background:#584a7a}
+.win-c .chatHeader{background:#2a1c48}
+.win-c .thread{background:#1a1330}
+.win-c .bubble-them{background:#2a1c48;color:#f1e9ff;border-color:#3fe0c5}
+.win-c .bubble-me{background:#ff8fd0;color:#1a1330}
+.win-c .inputRow{background:#2a1c48}
+.win-c .textInput{color:#f1e9ff;border-color:#3fe0c5}
+.win-c .sendBtn{background:#3fe0c5;color:#1a1330}
+.win-d{background:#c0c0c0;color:#000;font-family:'Tahoma','Segoe UI',sans-serif}
+.win-d .titlebar{background:linear-gradient(90deg,#000080,#1084d0);color:#fff;border-bottom:2px solid #000;font-family:'Tahoma',sans-serif;font-size:13px;font-weight:bold}
+.win-d .ctrlDot{border-radius:0;background:#c0c0c0;border:1px solid #000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
+.win-d .tag{font-family:'Press Start 2P',monospace;color:#ffcc00;font-size:8px}
+.win-d .skyline{background:#c0c0c0;height:6px;border-bottom:2px solid #000}
+.win-d .bld{display:none}
+.win-d .sidebar{background:#c0c0c0;border-right:2px solid #000}
+.win-d .sideHead{font-family:'Tahoma',sans-serif;font-size:11px;background:#000080;color:#fff}
+.win-d .convItem{border-bottom:1px solid #808080}
+.win-d .convItem-active{background:#000080;color:#fff}
+.win-d .avatar{background:#fff;border:1px solid #000;color:#000;font-family:'Press Start 2P',monospace;font-size:11px;border-radius:0}
+.win-d .dot-online{background:#00a000;border-radius:0}
+.win-d .dot-away{background:#e0a000;border-radius:0}
+.win-d .dot-offline{background:#808080;border-radius:0}
+.win-d .chatHeader{background:#c0c0c0;border-bottom:2px solid #000}
+.win-d .chatName{font-family:'Tahoma',sans-serif;font-size:13px;font-weight:bold}
+.win-d .thread{background:#fff}
+.win-d .bubble{border-radius:0;box-shadow:1px 1px 0 #808080;border:1px solid #000}
+.win-d .bubble-them{background:#dcdcdc;color:#000}
+.win-d .bubble-me{background:#316ac5;color:#fff}
+.win-d .inputRow{background:#c0c0c0;border-top:2px solid #000}
+.win-d .textInput{font-family:'Tahoma',sans-serif;border:1px solid #000;box-shadow:inset 1px 1px 0 #808080;background:#fff;color:#000;border-radius:0}
+.win-d .sendBtn{font-family:'Press Start 2P',monospace;font-size:9px;background:#c0c0c0;color:#000;border:1px solid #000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
+.win-e{background:#f4ecd8;color:#3a2f1f;font-family:'Verdana',sans-serif}
+.win-e .titlebar{background:#d9c9a3;border-bottom:2px solid #8a7550;color:#3a2f1f;font-family:'Verdana',sans-serif;font-size:12px;font-weight:bold}
+.win-e .ctrlDot{background:#e0c46b;border:1px solid #8a7550;border-radius:50%}
+.win-e .tag{font-family:'Press Start 2P',monospace;color:#c0392b;font-size:8px}
+.win-e .skyline{display:none}
+.win-e .sidebar{background:#eee3c8;border-right:2px solid #8a7550}
+.win-e .sideHead{font-family:'Verdana',sans-serif;font-size:11px;background:#d9c9a3;color:#3a2f1f}
+.win-e .convItem{border-bottom:1px solid #d9c9a3}
+.win-e .convItem-active{background:#e0c46b}
+.win-e .avatar{background:#c0392b;color:#fff;border-radius:50%;border-color:#8a7550;font-family:'Press Start 2P',monospace;font-size:11px}
+.win-e .dot-online{background:#2ecc71;border-radius:50%}
+.win-e .dot-away{background:#e0c46b;border-radius:50%}
+.win-e .dot-offline{background:#b0a58a;border-radius:50%}
+.win-e .chatHeader{background:#eee3c8;border-bottom:2px solid #d9c9a3}
+.win-e .chatName{font-family:'Verdana',sans-serif;font-size:13px;font-weight:bold}
+.win-e .thread{background:#faf4e4}
+.win-e .bubble{border-radius:10px;box-shadow:none;border:1px solid #d9c9a3}
+.win-e .bubble-them{background:#fff;color:#3a2f1f}
+.win-e .bubble-me{background:#c0392b;color:#fff}
+.win-e .inputRow{background:#eee3c8;border-top:2px solid #d9c9a3}
+.win-e .textInput{background:#fff;border:1px solid #8a7550;color:#3a2f1f;border-radius:6px;font-family:'Verdana',sans-serif}
+.win-e .sendBtn{font-family:'Press Start 2P',monospace;font-size:9px;background:#c0392b;color:#fff;border:1px solid #8a2f1f;border-radius:6px;box-shadow:none}
+.win-f{background:#ece4d3;color:#2b2018;font-family:'Special Elite',monospace}
+.win-f .titlebar{background:#ece4d3;border-bottom:2px dashed #2b2018;font-family:'Special Elite',monospace;font-size:12px}
+.win-f .ctrlDot{display:none}
+.win-f .tag{font-family:'Press Start 2P',monospace;font-size:8px;border:1px solid #2b2018;padding:2px 4px}
+.win-f .skyline{display:none}
+.win-f .sidebar{background:#e4dac4;border-right:2px dashed #2b2018}
+.win-f .sideHead{font-family:'Special Elite',monospace;font-size:11px;border-bottom:1px dashed #2b2018;background:transparent}
+.win-f .convItem{border-bottom:1px dashed #cbbfa0}
+.win-f .convItem-active{background:#d8cba9}
+.win-f .avatar{background:#2b2018;color:#ece4d3;border-radius:0;border-color:#2b2018;font-family:'Press Start 2P',monospace;font-size:11px}
+.win-f .dot-online{background:#4a7a3d;border-radius:0}
+.win-f .dot-away{background:#b08a2e;border-radius:0}
+.win-f .dot-offline{background:#8a7f6a;border-radius:0}
+.win-f .chatHeader{background:#ece4d3;border-bottom:1px dashed #2b2018}
+.win-f .chatName{font-family:'Special Elite',monospace;font-size:13px}
+.win-f .thread{background:#f4eee0}
+.win-f .bubble{border-radius:0;box-shadow:none;border:1px dashed #2b2018;background:transparent}
+.win-f .bubble-them{color:#2b2018}
+.win-f .bubble-me{color:#2b2018;border-style:solid}
+.win-f .inputRow{background:#ece4d3;border-top:1px dashed #2b2018}
+.win-f .textInput{background:#f4eee0;border:1px dashed #2b2018;color:#2b2018;font-family:'Special Elite',monospace}
+.win-f .sendBtn{font-family:'Press Start 2P',monospace;font-size:9px;background:#2b2018;color:#ece4d3;border:1px solid #2b2018;box-shadow:none}
+.mwindow{width:820px;height:580px;border-radius:22px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.55);font-family:'M PLUS Rounded 1c',sans-serif}
+.petals{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.petal{position:absolute;top:-20px;width:9px;height:9px;border-radius:50% 0 50% 50%;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg)}100%{transform:translateY(620px) rotate(360deg)}}
+.petal:nth-child(1){left:6%;animation-duration:11s;animation-delay:0s}
+.petal:nth-child(2){left:18%;animation-duration:14s;animation-delay:2s}
+.petal:nth-child(3){left:32%;animation-duration:9s;animation-delay:4s}
+.petal:nth-child(4){left:47%;animation-duration:16s;animation-delay:1s}
+.petal:nth-child(5){left:61%;animation-duration:12s;animation-delay:5s}
+.petal:nth-child(6){left:74%;animation-duration:10s;animation-delay:3s}
+.petal:nth-child(7){left:86%;animation-duration:15s;animation-delay:6s}
+.petal:nth-child(8){left:94%;animation-duration:13s;animation-delay:2.5s}
+.mheader{display:flex;align-items:center;gap:12px;padding:18px 22px;position:relative;z-index:2}
+.mtitle{font-family:'Dela Gothic One',sans-serif;font-size:17px;letter-spacing:.5px;flex:1}
+.mjptag{font-size:12px;opacity:.55}
+.mbody{display:flex;flex:1;min-height:0;position:relative;z-index:2}
+.msidebar{width:230px;flex-shrink:0;overflow-y:auto;padding:10px}
+.msideHead{font-size:11px;letter-spacing:1px;opacity:.5;padding:8px 10px}
+.mconvItem{display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;cursor:pointer}
+.mavatar{width:40px;height:40px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.mconvText{flex:1;min-width:0}
+.mconvName{font-size:15px;font-weight:700}
+.mconvPrev{font-size:12px;opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mchat{flex:1;display:flex;flex-direction:column;min-height:0}
+.mchatHeader{display:flex;align-items:center;gap:12px;padding:16px 20px}
+.mchatText{display:flex;flex-direction:column;gap:2px}
+.mchatName{font-size:15px;font-weight:700}
+.mbio{font-size:12px;opacity:.55;font-style:italic}
+.mthread{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.mrow{display:flex}
+.mrow-me{justify-content:flex-end}
+.mrow-them{justify-content:flex-start}
+.mbubble{max-width:60%;padding:12px 16px;border-radius:18px;font-size:16px;line-height:1.4}
+.minputRow{display:flex;gap:10px;padding:16px 18px;align-items:center}
+.mtextInput{flex:1;border-radius:999px;padding:12px 18px;border:none;outline:none;font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px}
+.msendBtn{width:46px;height:46px;flex-shrink:0;border-radius:50%;border:none;font-size:16px;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif}
+.win-g{background:linear-gradient(160deg,#1c1026,#0c0712)}
+.win-g .mheader{background:linear-gradient(90deg,#241633,#160b22);color:#f3d9ff}
+.win-g .mtitle{color:#ff5fa8}
+.win-g .msidebar{background:#160b22;color:#f3d9ff}
+.win-g .mconvItem-active{background:rgba(255,95,168,.14)}
+.win-g .mavatar{background:linear-gradient(135deg,#ff5fa8,#8b5cf6);color:#fff}
+.win-g .dot-online{background:#4ce0c0;border-radius:50%}
+.win-g .dot-away{background:#ffce6b;border-radius:50%}
+.win-g .dot-offline{background:#5a4a68;border-radius:50%}
+.win-g .mchatHeader{background:#1c1026;color:#f3d9ff}
+.win-g .mthread{background:#130a1c}
+.win-g .mbubble-them{background:#241633;color:#f3d9ff}
+.win-g .mbubble-me{background:linear-gradient(135deg,#ff5fa8,#8b5cf6);color:#1c0f28}
+.win-g .minputRow{background:#1c1026}
+.win-g .mtextInput{background:#241633;color:#f3d9ff}
+.win-g .msendBtn{background:linear-gradient(135deg,#ff5fa8,#8b5cf6);color:#fff}
+.win-g .petal{background:#ff9fd0;opacity:.6}
+.win-h{background:linear-gradient(160deg,#0d0d15,#070708)}
+.win-h .mheader{background:linear-gradient(90deg,#161620,#0a0a10);color:#e9e2e6}
+.win-h .mtitle{color:#b06080}
+.win-h .msidebar{background:#0e0e15;color:#e9e2e6}
+.win-h .mconvItem-active{background:rgba(176,96,128,.12)}
+.win-h .mavatar{background:linear-gradient(135deg,#4a4a72,#2a2a3a);color:#f1e4e8}
+.win-h .dot-online{background:#7ea88f;border-radius:50%}
+.win-h .dot-away{background:#b0925f;border-radius:50%}
+.win-h .dot-offline{background:#3d3d4a;border-radius:50%}
+.win-h .mchatHeader{background:#0d0d15;color:#e9e2e6}
+.win-h .mthread{background:#0a0a10}
+.win-h .mbubble-them{background:#181822;color:#e9e2e6}
+.win-h .mbubble-me{background:#3a1f2c;color:#f1e4e8}
+.win-h .minputRow{background:#0d0d15}
+.win-h .mtextInput{background:#181822;color:#e9e2e6}
+.win-h .msendBtn{background:#b06080;color:#0d0d15}
+.win-h .petal{background:#b06080;opacity:.3}
+@keyframes drift{0%{transform:translateX(-90px)}100%{transform:translateX(900px)}}
+.win-i{background:radial-gradient(ellipse at 50% -10%,rgba(200,30,40,.15),transparent 60%),linear-gradient(160deg,#120808,#050303)}
+.win-i .petal{top:auto;width:70px;height:32px;border-radius:60% 40% 55% 45%/55% 45% 60% 40%;background:#c81d25;opacity:.1;animation-name:drift;animation-timing-function:linear}
+.win-i .petal:nth-child(1){top:8%}
+.win-i .petal:nth-child(2){top:20%}
+.win-i .petal:nth-child(3){top:35%}
+.win-i .petal:nth-child(4){top:50%}
+.win-i .petal:nth-child(5){top:15%}
+.win-i .petal:nth-child(6){top:60%}
+.win-i .petal:nth-child(7){top:42%}
+.win-i .petal:nth-child(8){top:70%}
+.win-i .mheader{background:linear-gradient(90deg,#180a0a,#0a0505);color:#f0dede;border-bottom:1px solid rgba(200,30,40,.3)}
+.win-i .mtitle{font-family:'Yuji Syuku',serif;color:#c81d25;font-size:19px}
+.win-i .msidebar{background:#0c0606;color:#f0dede}
+.win-i .mconvItem-active{background:rgba(200,30,40,.14)}
+.win-i .mavatar{background:#150909;color:#c81d25;border:2px solid #c81d25;font-family:'Yuji Syuku',serif}
+.win-i .dot-online{background:#c81d25;border-radius:50%}
+.win-i .dot-away{background:#8a5a1a;border-radius:50%}
+.win-i .dot-offline{background:#3a2a2a;border-radius:50%}
+.win-i .mchatHeader{background:#0c0606;color:#f0dede}
+.win-i .mthread{background:#070404}
+.win-i .mbubble-them{background:#150909;color:#f0dede;border:1px solid rgba(200,30,40,.25)}
+.win-i .mbubble-me{background:#c81d25;color:#0c0404}
+.win-i .minputRow{background:#0c0606}
+.win-i .mtextInput{background:#150909;color:#f0dede}
+.win-i .msendBtn{background:#c81d25;color:#0c0404}
+.win-j{background-color:#0a0a0a;background-image:repeating-linear-gradient(#0a0a0a 0px,#0a0a0a 26px,rgba(255,255,255,.05) 27px,rgba(255,255,255,.05) 28px);color:#e2ded6}
+.win-j .petal{border-radius:40% 60% 55% 45%/50% 40% 60% 50%;background:#7a0d14;opacity:.35;width:24px;height:20px}
+.win-j .mheader{background:#0a0a0a;border-bottom:1px solid #7a0d14;color:#e2ded6}
+.win-j .mtitle{font-family:'UnifrakturMaguntia',serif;color:#c81d25;font-size:24px;letter-spacing:1px}
+.win-j .msidebar{background:#0d0d0d;color:#e2ded6}
+.win-j .mconvItem-active{background:rgba(122,13,20,.18)}
+.win-j .mavatar{background:#151515;color:#c81d25;border:1px solid #7a0d14;font-family:'Caveat',cursive;font-weight:700;font-size:20px}
+.win-j .dot-online{background:#c81d25;border-radius:50%}
+.win-j .dot-away{background:#8a6a2f;border-radius:50%}
+.win-j .dot-offline{background:#3a3a3a;border-radius:50%}
+.win-j .mchatHeader{background:#0d0d0d;color:#e2ded6}
+.win-j .mbio{color:#c97580}
+.win-j .mthread{background:#0a0a0a}
+.win-j .mbubble{font-family:'Caveat',cursive;font-size:20px}
+.win-j .mbubble-them{background:transparent;border-bottom:1px solid #2a2a2a;border-radius:0;color:#e2ded6;padding-left:0}
+.win-j .mbubble-me{background:transparent;border-bottom:1px solid #7a0d14;border-radius:0;color:#c81d25;padding-left:0}
+.win-j .minputRow{background:#0d0d0d}
+.win-j .mtextInput{background:#141414;color:#e2ded6;font-family:'Caveat',cursive;font-size:19px}
+.win-j .msendBtn{background:#7a0d14;color:#e2ded6}
+.win-k{background:#0a1f1f;color:#eafff5}
+.win-k .titlebar{background:#0f2e2e;border-bottom-color:#ff6b4a}
+.win-k .ctrlDot{background:#f0c95a}
+.win-k .tag{color:#ff6b4a}
+.win-k .bld{background:#ff6b4a}
+.win-k .bld:nth-child(3n){background:#f0c95a}
+.win-k .skyline{background:#0f2e2e}
+.win-k .sidebar{background:#0f2e2e}
+.win-k .sideHead{color:#ff6b4a}
+.win-k .convItem-active{background:#173d3d}
+.win-k .avatar{background:#f0c95a;color:#0a1f1f}
+.win-k .dot-online{background:#4ce0a0}
+.win-k .dot-away{background:#f0c95a}
+.win-k .dot-offline{background:#4a6a6a}
+.win-k .chatHeader{background:#0f2e2e}
+.win-k .thread{background:#0a1f1f}
+.win-k .bubble-them{background:#0f2e2e;color:#eafff5;border-color:#ff6b4a}
+.win-k .bubble-me{background:#ff6b4a;color:#0a1f1f}
+.win-k .inputRow{background:#0f2e2e}
+.win-k .textInput{color:#eafff5;border-color:#f0c95a;background:#0a1f1f}
+.win-k .sendBtn{background:#f0c95a;color:#0a1f1f}
+.win-l{background:#14102b;color:#eee7ff}
+.win-l .titlebar{background:#201a44;border-bottom-color:#7fd8ff}
+.win-l .ctrlDot{background:#b98bff}
+.win-l .tag{color:#7fd8ff}
+.win-l .bld{background:#7fd8ff}
+.win-l .bld:nth-child(3n+2){background:#b98bff}
+.win-l .skyline{background:#201a44}
+.win-l .sidebar{background:#201a44}
+.win-l .sideHead{color:#7fd8ff}
+.win-l .convItem-active{background:#2c2360}
+.win-l .avatar{background:#b98bff;color:#14102b}
+.win-l .dot-online{background:#7fd8ff}
+.win-l .dot-away{background:#f0c95a}
+.win-l .dot-offline{background:#4a4470}
+.win-l .chatHeader{background:#201a44}
+.win-l .thread{background:#14102b}
+.win-l .bubble-them{background:#201a44;color:#eee7ff;border-color:#7fd8ff}
+.win-l .bubble-me{background:#b98bff;color:#14102b}
+.win-l .inputRow{background:#201a44}
+.win-l .textInput{color:#eee7ff;border-color:#7fd8ff;background:#14102b}
+.win-l .sendBtn{background:#7fd8ff;color:#14102b}
+.win-m{background:#0f1b14;color:#eaf5ec}
+.win-m .titlebar{background:#16281c;border-bottom-color:#ffb347}
+.win-m .ctrlDot{background:#6fae66}
+.win-m .tag{color:#ffb347}
+.win-m .bld{background:#ffb347}
+.win-m .bld:nth-child(3n+1){background:#6fae66}
+.win-m .skyline{background:#16281c}
+.win-m .sidebar{background:#16281c}
+.win-m .sideHead{color:#ffb347}
+.win-m .convItem-active{background:#1f3a27}
+.win-m .avatar{background:#ffb347;color:#0f1b14}
+.win-m .dot-online{background:#6fae66}
+.win-m .dot-away{background:#ffb347}
+.win-m .dot-offline{background:#48594c}
+.win-m .chatHeader{background:#16281c}
+.win-m .thread{background:#0f1b14}
+.win-m .bubble-them{background:#16281c;color:#eaf5ec;border-color:#ffb347}
+.win-m .bubble-me{background:#6fae66;color:#0f1b14}
+.win-m .inputRow{background:#16281c}
+.win-m .textInput{color:#eaf5ec;border-color:#ffb347;background:#0f1b14}
+.win-m .sendBtn{background:#ffb347;color:#0f1b14}
+.win-n{background:#2a1620;color:#ffeef2}
+.win-n .titlebar{background:#3a1e2c;border-bottom-color:#ff8fa3}
+.win-n .ctrlDot{background:#d4a5ff}
+.win-n .tag{color:#ff8fa3}
+.win-n .bld{background:#ff8fa3}
+.win-n .bld:nth-child(3n+2){background:#d4a5ff}
+.win-n .skyline{background:#3a1e2c}
+.win-n .sidebar{background:#3a1e2c}
+.win-n .sideHead{color:#ff8fa3}
+.win-n .convItem-active{background:#4a2638}
+.win-n .avatar{background:#d4a5ff;color:#2a1620}
+.win-n .dot-online{background:#ff8fa3}
+.win-n .dot-away{background:#ffd27a}
+.win-n .dot-offline{background:#6a4a58}
+.win-n .chatHeader{background:#3a1e2c}
+.win-n .thread{background:#2a1620}
+.win-n .bubble-them{background:#3a1e2c;color:#ffeef2;border-color:#ff8fa3}
+.win-n .bubble-me{background:#d4a5ff;color:#2a1620}
+.win-n .inputRow{background:#3a1e2c}
+.win-n .textInput{color:#ffeef2;border-color:#ff8fa3;background:#2a1620}
+.win-n .sendBtn{background:#ff8fa3;color:#2a1620}
+.win-o{background:#1a2028;color:#eef4f8}
+.win-o .titlebar{background:#232b36;border-bottom-color:#baff5c}
+.win-o .ctrlDot{background:#5cc9ff}
+.win-o .tag{color:#baff5c}
+.win-o .bld{background:#baff5c}
+.win-o .bld:nth-child(3n+1){background:#5cc9ff}
+.win-o .skyline{background:#232b36}
+.win-o .sidebar{background:#232b36}
+.win-o .sideHead{color:#baff5c}
+.win-o .convItem-active{background:#2d3846}
+.win-o .avatar{background:#5cc9ff;color:#1a2028}
+.win-o .dot-online{background:#baff5c}
+.win-o .dot-away{background:#ffd27a}
+.win-o .dot-offline{background:#4a5562}
+.win-o .chatHeader{background:#232b36}
+.win-o .thread{background:#1a2028}
+.win-o .bubble-them{background:#232b36;color:#eef4f8;border-color:#5cc9ff}
+.win-o .bubble-me{background:#baff5c;color:#1a2028}
+.win-o .inputRow{background:#232b36}
+.win-o .textInput{color:#eef4f8;border-color:#baff5c;background:#1a2028}
+.win-o .sendBtn{background:#baff5c;color:#1a2028}
+</style></helmet><section><div class="stage"><div class="turnLabel">TURA 7 — jos dve boje</div><div class="row"><sc-for list="{{ variantsBuddy2 }}" as="v" hint-placeholder-count="2"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }}"><div class="scanlines"></div><div class="titlebar"><div class="ctrls"><div class="ctrlDot"></div><div class="ctrlDot"></div><div class="ctrlDot"></div></div><div class="titleText">{{ v.label }}</div><div class="tag">トーキョー</div></div><div class="skyline"><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div></div><div class="body"><div class="sidebar"><div class="sideHead">KONTAKTI</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.itemClass }}" onClick="{{ c.onClick }}"><div class="avatar">{{ c.initial }}</div><div class="convText"><div class="convName">{{ c.name }}</div><div class="convPrev">{{ c.preview }}</div></div><div class="convTime">{{ c.lastTime }}</div></div></sc-for></div><div class="chat"><div class="chatHeader"><div class="avatar">{{ v.activeInitial }}</div><div class="chatHeaderText"><div class="chatName">{{ v.activeName }}</div><div class="chatStatus"><div class="{{ v.activeStatusClass }}"></div><span>{{ v.activeStatusText }}</span></div></div></div><div class="thread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.rowClass }}"><div class="{{ m.bubbleClass }}"><p class="bubbleTxt">{{ m.text }}</p><span class="bubbleTime">{{ m.time }}</span></div></div></sc-for></div><div class="inputRow"><input class="textInput" placeholder="upisi_poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="sendBtn" onClick="{{ v.onSend }}">SEND</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 6 — BUDDY NIGHT fazon, nove boje</div><div class="row"><sc-for list="{{ variantsBuddy }}" as="v" hint-placeholder-count="3"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }}"><div class="scanlines"></div><div class="titlebar"><div class="ctrls"><div class="ctrlDot"></div><div class="ctrlDot"></div><div class="ctrlDot"></div></div><div class="titleText">{{ v.label }}</div><div class="tag">トーキョー</div></div><div class="skyline"><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div></div><div class="body"><div class="sidebar"><div class="sideHead">KONTAKTI</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.itemClass }}" onClick="{{ c.onClick }}"><div class="avatar">{{ c.initial }}</div><div class="convText"><div class="convName">{{ c.name }}</div><div class="convPrev">{{ c.preview }}</div></div><div class="convTime">{{ c.lastTime }}</div></div></sc-for></div><div class="chat"><div class="chatHeader"><div class="avatar">{{ v.activeInitial }}</div><div class="chatHeaderText"><div class="chatName">{{ v.activeName }}</div><div class="chatStatus"><div class="{{ v.activeStatusClass }}"></div><span>{{ v.activeStatusText }}</span></div></div></div><div class="thread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.rowClass }}"><div class="{{ m.bubbleClass }}"><p class="bubbleTxt">{{ m.text }}</p><span class="bubbleTime">{{ m.time }}</span></div></div></sc-for></div><div class="inputRow"><input class="textInput" placeholder="upisi_poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="sendBtn" onClick="{{ v.onSend }}">SEND</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 5 — THE LEDGER (originalni noir/notebook fazon)</div><div class="row"><sc-for list="{{ variantsNotebook }}" as="v" hint-placeholder-count="1"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }} mwindow"><div class="petals"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div></div><div class="mheader"><div class="mtitle">{{ v.label }}</div><div class="mjptag">{{ v.jpTag }}</div></div><div class="mbody"><div class="msidebar"><div class="msideHead">MESSAGES</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.mItemClass }}" onClick="{{ c.onClick }}"><div class="mavatar">{{ c.initial }}</div><div class="mconvText"><div class="mconvName">{{ c.name }}</div><div class="mconvPrev">{{ c.preview }}</div></div></div></sc-for></div><div class="mchat"><div class="mchatHeader"><div class="mavatar">{{ v.activeInitial }}</div><div class="mchatText"><div class="mchatName">{{ v.activeName }}</div><div class="mbio">{{ v.activeBio }}</div></div></div><div class="mthread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.mRowClass }}"><div class="{{ m.mBubbleClass }}">{{ m.text }}</div></div></sc-for></div><div class="minputRow"><input class="mtextInput" placeholder="napisi poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="msendBtn" onClick="{{ v.onSend }}">➤</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 4 — SHADOW CLAN (originalni ninja fazon)</div><div class="row"><sc-for list="{{ variantsUltra }}" as="v" hint-placeholder-count="1"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }} mwindow"><div class="petals"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div></div><div class="mheader"><div class="mtitle">{{ v.label }}</div><div class="mjptag">{{ v.jpTag }}</div></div><div class="mbody"><div class="msidebar"><div class="msideHead">MESSAGES</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.mItemClass }}" onClick="{{ c.onClick }}"><div class="mavatar">{{ c.initial }}</div><div class="mconvText"><div class="mconvName">{{ c.name }}</div><div class="mconvPrev">{{ c.preview }}</div></div></div></sc-for></div><div class="mchat"><div class="mchatHeader"><div class="mavatar">{{ v.activeInitial }}</div><div class="mchatText"><div class="mchatName">{{ v.activeName }}</div><div class="mbio">{{ v.activeBio }}</div></div></div><div class="mthread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.mRowClass }}"><div class="{{ m.mBubbleClass }}">{{ m.text }}</div></div></sc-for></div><div class="minputRow"><input class="mtextInput" placeholder="napisi poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="msendBtn" onClick="{{ v.onSend }}">➤</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 3 — MODERNO, ANIME/JAPAN EMO</div><div class="row"><sc-for list="{{ variantsModern }}" as="v" hint-placeholder-count="2"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }} mwindow"><div class="petals"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div></div><div class="mheader"><div class="mtitle">{{ v.label }}</div><div class="mjptag">{{ v.jpTag }}</div></div><div class="mbody"><div class="msidebar"><div class="msideHead">MESSAGES</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.mItemClass }}" onClick="{{ c.onClick }}"><div class="mavatar">{{ c.initial }}</div><div class="mconvText"><div class="mconvName">{{ c.name }}</div><div class="mconvPrev">{{ c.preview }}</div></div></div></sc-for></div><div class="mchat"><div class="mchatHeader"><div class="mavatar">{{ v.activeInitial }}</div><div class="mchatText"><div class="mchatName">{{ v.activeName }}</div><div class="mbio">{{ v.activeBio }}</div></div></div><div class="mthread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.mRowClass }}"><div class="{{ m.mBubbleClass }}">{{ m.text }}</div></div></sc-for></div><div class="minputRow"><input class="mtextInput" placeholder="napisi poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="msendBtn" onClick="{{ v.onSend }}">➤</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 2 — MANJE PIKSELA, DISKRETAN TOKIO</div><div class="row"><sc-for list="{{ variantsNew }}" as="v" hint-placeholder-count="3"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }}"><div class="scanlines"></div><div class="titlebar"><div class="ctrls"><div class="ctrlDot"></div><div class="ctrlDot"></div><div class="ctrlDot"></div></div><div class="titleText">{{ v.label }}</div><div class="tag">TYO</div></div><div class="skyline"><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div></div><div class="body"><div class="sidebar"><div class="sideHead">KONTAKTI</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.itemClass }}" onClick="{{ c.onClick }}"><div class="avatar">{{ c.initial }}</div><div class="convText"><div class="convName">{{ c.name }}</div><div class="convPrev">{{ c.preview }}</div></div><div class="convTime">{{ c.lastTime }}</div></div></sc-for></div><div class="chat"><div class="chatHeader"><div class="avatar">{{ v.activeInitial }}</div><div class="chatHeaderText"><div class="chatName">{{ v.activeName }}</div><div class="chatStatus"><div class="{{ v.activeStatusClass }}"></div><span>{{ v.activeStatusText }}</span></div></div></div><div class="thread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.rowClass }}"><div class="{{ m.bubbleClass }}"><p class="bubbleTxt">{{ m.text }}</p><span class="bubbleTime">{{ m.time }}</span></div></div></sc-for></div><div class="inputRow"><input class="textInput" placeholder="upisi_poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="sendBtn" onClick="{{ v.onSend }}">SEND</button></div></div></div></div></div></sc-for></div></div></section><section><div class="stage"><div class="turnLabel">TURA 1 — PIXEL TOKYO (originalni predlog)</div><div class="row"><sc-for list="{{ variantsOld }}" as="v" hint-placeholder-count="3"><div class="optWrap" id="{{ v.badge }}"><div class="badge">{{ v.badge }}</div><div class="{{ v.winClass }}"><div class="scanlines"></div><div class="titlebar"><div class="ctrls"><div class="ctrlDot"></div><div class="ctrlDot"></div><div class="ctrlDot"></div></div><div class="titleText">{{ v.label }}</div><div class="tag">トーキョー</div></div><div class="skyline"><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div><div class="bld"></div></div><div class="body"><div class="sidebar"><div class="sideHead">KONTAKTI</div><sc-for list="{{ v.contacts }}" as="c" hint-placeholder-count="3"><div class="{{ c.itemClass }}" onClick="{{ c.onClick }}"><div class="avatar">{{ c.initial }}</div><div class="convText"><div class="convName">{{ c.name }}</div><div class="convPrev">{{ c.preview }}</div></div><div class="convTime">{{ c.lastTime }}</div></div></sc-for></div><div class="chat"><div class="chatHeader"><div class="avatar">{{ v.activeInitial }}</div><div class="chatHeaderText"><div class="chatName">{{ v.activeName }}</div><div class="chatStatus"><div class="{{ v.activeStatusClass }}"></div><span>{{ v.activeStatusText }}</span></div></div></div><div class="thread" ref="{{ v.threadRef }}"><sc-for list="{{ v.thread }}" as="m" hint-placeholder-count="3"><div class="{{ m.rowClass }}"><div class="{{ m.bubbleClass }}"><p class="bubbleTxt">{{ m.text }}</p><span class="bubbleTime">{{ m.time }}</span></div></div></sc-for></div><div class="inputRow"><input class="textInput" placeholder="upisi_poruku..." value="{{ v.draftValue }}" onChange="{{ v.onDraftChange }}" onKeyDown="{{ v.onKeyDown }}"/><button class="sendBtn" onClick="{{ v.onSend }}">SEND</button></div></div></div></div></div></sc-for></div></div></section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  contacts = [
+    {id:'yuki', name:'YUKI_88', status:'online'},
+    {id:'ren', name:'REN_TOKYO', status:'away'},
+    {id:'sakura', name:'SAKURA.EXE', status:'offline'}
+  ];
+  seed = {
+    yuki: [
+      {from:'them', text:'jesi budan? mreza je opet spora u ovom delu grada', time:'23:04'},
+      {from:'me', text:'budan sam, gledam neon dole na ulici', time:'23:06'},
+      {from:'them', text:'dodji na krov, grad izgleda ludo nocas', time:'23:07'}
+    ],
+    ren: [
+      {from:'them', text:'poslao sam fajl, provuci ga kroz stari modem', time:'21:40'},
+      {from:'me', text:'primljeno. cekam download... 12%', time:'21:41'},
+      {from:'them', text:'strpi se, veza je stara kao i grad', time:'21:42'}
+    ],
+    sakura: [
+      {from:'them', text:'sistem ide na odrzavanje do ponoci', time:'19:58'},
+      {from:'me', text:'kao i uvek :)', time:'20:00'}
+    ]
+  };
+  variantIds = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];
+  threadRefs = {a: React.createRef(), b: React.createRef(), c: React.createRef(), d: React.createRef(), e: React.createRef(), f: React.createRef(), g: React.createRef(), h: React.createRef(), i: React.createRef(), j: React.createRef(), k: React.createRef(), l: React.createRef(), m: React.createRef(), n: React.createRef(), o: React.createRef()};
+  bios = {yuki:'3:14am, ne mogu da spim opet', ren:'kisa u tokiju u kruznom repeat-u', sakura:'offline. previse mislim.'};
+  state = {
+    active: {a:'yuki', b:'yuki', c:'yuki', d:'yuki', e:'yuki', f:'yuki', g:'yuki', h:'yuki', i:'yuki', j:'yuki', k:'yuki', l:'yuki', m:'yuki', n:'yuki', o:'yuki'},
+    messages: {a: this.clone(), b: this.clone(), c: this.clone(), d: this.clone(), e: this.clone(), f: this.clone(), g: this.clone(), h: this.clone(), i: this.clone(), j: this.clone(), k: this.clone(), l: this.clone(), m: this.clone(), n: this.clone(), o: this.clone()},
+    draft: {a:'', b:'', c:'', d:'', e:'', f:'', g:'', h:'', i:'', j:'', k:'', l:'', m:'', n:'', o:''}
+  };
+  clone(){ return JSON.parse(JSON.stringify(this.seed)); }
+  componentDidMount(){ this.scrollAll(); }
+  componentDidUpdate(){ this.scrollAll(); }
+  scrollAll(){
+    this.variantIds.forEach(v=>{
+      const el = this.threadRefs[v] && this.threadRefs[v].current;
+      if(el) el.scrollTop = el.scrollHeight;
+    });
+  }
+  selectConv(v,id){ this.setState(s=>({active:{...s.active,[v]:id}})); }
+  updateDraft(v,text){ this.setState(s=>({draft:{...s.draft,[v]:text}})); }
+  sendMessage(v){
+    const text = (this.state.draft[v]||'').trim();
+    if(!text) return;
+    const activeId = this.state.active[v];
+    this.setState(s=>{
+      const msgs = {...s.messages};
+      msgs[v] = {...msgs[v]};
+      msgs[v][activeId] = [...msgs[v][activeId], {from:'me', text, time:'NOW'}];
+      return {messages: msgs, draft:{...s.draft,[v]:''}};
+    });
+  }
+  handleKeyDown(v,e){
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); this.sendMessage(v); }
+  }
+  renderVals(){
+    const labels = {a:'ARCADE_NEON.EXE', b:'PHOSPHOR_TERM', c:'BUDDY_NIGHT.EXE', d:'MSN Messenger', e:'Buddy List', f:'Vecernja pisma', g:'Sakura Nights', h:'Midnight Diary', i:'KAGE', j:'THE LEDGER', k:'SUNSET_TIDE.EXE', l:'FROST_BUDDY.EXE', m:'AMBER_GROVE.EXE', n:'ROSE_QUARTZ.EXE', o:'SLATE_LIME.EXE'};
+    const themeClass = {a:'window win-a', b:'window win-b', c:'window win-c', d:'window win-d', e:'window win-e', f:'window win-f', g:'win-g', h:'win-h', i:'win-i', j:'win-j', k:'window win-k', l:'window win-l', m:'window win-m', n:'window win-n', o:'window win-o'};
+    const badges = {a:'1a', b:'1b', c:'1c', d:'2a', e:'2b', f:'2c', g:'3a', h:'3b', i:'4a', j:'5a', k:'6a', l:'6b', m:'6c', n:'7a', o:'7b'};
+    const jpTags = {g:'桜', h:'桜', i:'影', j:'✕'};
+    const variants = this.variantIds.map(v=>{
+      const active = this.state.active[v];
+      const msgsByContact = this.state.messages[v];
+      const contactsList = this.contacts.map(c=>{
+        const thread = msgsByContact[c.id];
+        const last = thread[thread.length-1];
+        return {
+          id:c.id, name:c.name,
+          initial:c.name.charAt(0),
+          itemClass: 'convItem' + (c.id===active?' convItem-active':''),
+          mItemClass: 'mconvItem' + (c.id===active?' mconvItem-active':''),
+          preview: last.text,
+          lastTime: last.time,
+          onClick: ()=>this.selectConv(v,c.id)
+        };
+      });
+      const activeContact = this.contacts.find(c=>c.id===active);
+      const thread = msgsByContact[active].map((m,i)=>({
+        text:m.text, time:m.time,
+        bubbleClass: 'bubble ' + (m.from==='me'?'bubble-me':'bubble-them'),
+        rowClass: 'msgRow ' + (m.from==='me'?'msgRow-me':'msgRow-them'),
+        mBubbleClass: 'mbubble ' + (m.from==='me'?'mbubble-me':'mbubble-them'),
+        mRowClass: 'mrow ' + (m.from==='me'?'mrow-me':'mrow-them')
+      }));
+      return {
+        id:v,
+        winClass: themeClass[v],
+        label: labels[v],
+        badge: badges[v],
+        contacts: contactsList,
+        activeName: activeContact.name,
+        activeInitial: activeContact.name.charAt(0),
+        activeStatusClass: 'dot dot-'+activeContact.status,
+        activeStatusText: activeContact.status.toUpperCase(),
+        activeBio: this.bios[activeContact.id],
+        jpTag: jpTags[v],
+        thread,
+        threadRef: this.threadRefs[v],
+        draftValue: this.state.draft[v],
+        onDraftChange: (e)=>this.updateDraft(v, e.target.value),
+        onKeyDown: (e)=>this.handleKeyDown(v,e),
+        onSend: ()=>this.sendMessage(v)
+      };
+    });
+    return { variantsOld: variants.slice(0,3), variantsNew: variants.slice(3,6), variantsModern: variants.slice(6,8), variantsUltra: variants.slice(8,9), variantsNotebook: variants.slice(9,10), variantsBuddy: variants.slice(10,13), variantsBuddy2: variants.slice(13,15) };
+  }
+}
+</script>
+</body>
+</html>

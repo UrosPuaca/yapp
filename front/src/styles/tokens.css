@@ -1,0 +1,147 @@
+/* Design tokeni — podrazumevana tema: BUDDY_NIGHT.EXE (varijanta 1c) */
+:root {
+  /* Boje */
+  --bg-window: #1a1330;        /* pozadina prozora / thread */
+  --bg-panel: #2a1c48;         /* title bar / chat header / input red / bubble-them */
+  --bg-sidebar: #221a3d;       /* pozadina sidebar-a */
+  --bg-skyline: #241a3f;       /* pozadina skyline trake */
+  --bg-item-active: #33255a;   /* aktivna stavka u sidebar-u */
+
+  --accent: #3fe0c5;           /* tirkizna — akcenat, bordovi, ONLINE */
+  --accent-2: #ff8fd0;         /* roze — avatar, moja poruka, control dot */
+
+  --text-primary: #f1e9ff;
+
+  --status-online: #3fe0c5;
+  --status-away: #ffce54;
+  --status-offline: #584a7a;
+
+  /* Loptice procitane poruke. Zasicena plava, jer je bubble-me uvek
+     svetao (accent boja teme) — svetlija plava bi se izgubila. */
+  --msg-seen: #1436d4;
+
+  --black: #000;
+
+  /* Komponentni tokeni — po defaultu prate akcente, teme ih mogu pregaziti */
+  --avatar-bg: var(--accent-2);
+  --bubble-me-bg: var(--accent-2);
+  --send-bg: var(--accent);
+  --input-border: var(--accent);
+
+  /* Tipografija */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-retro: 'VT323', monospace;
+
+  /* Bordovi i senke — hard-edge, bez blur-a (rem = skalira se sa ekranom) */
+  --border-thin: 0.125rem solid var(--black);
+  --border-thick: 0.25rem solid var(--black);
+  --shadow-window: 0.5rem 0.5rem 0 var(--black), 0.875rem 0.875rem 0 rgba(0, 0, 0, 0.35);
+  --shadow-bubble: 0.25rem 0.25rem 0 var(--black);
+  --shadow-button: 0.1875rem 0.1875rem 0 var(--black);
+}
+
+/* Izvedeni tokeni moraju da se preračunaju na temovanom elementu —
+   na :root bi se "zamrzli" na default boje pre nego što tema promeni akcente. */
+[data-theme] {
+  --avatar-bg: var(--accent-2);
+  --bubble-me-bg: var(--accent-2);
+  --send-bg: var(--accent);
+  --input-border: var(--accent);
+}
+
+/* === Teme (iz prototipa: 6a, 6b, 6c, 7a) === */
+
+/* SUNSET_TIDE.EXE (6a) */
+[data-theme='sunset'] {
+  --bg-window: #0a1f1f;
+  --bg-panel: #0f2e2e;
+  --bg-sidebar: #0f2e2e;
+  --bg-skyline: #0f2e2e;
+  --bg-item-active: #173d3d;
+  --accent: #ff6b4a;
+  --accent-2: #f0c95a;
+  --text-primary: #eafff5;
+  --status-online: #4ce0a0;
+  --status-away: #f0c95a;
+  --status-offline: #4a6a6a;
+  --bubble-me-bg: #ff6b4a;
+  --send-bg: #f0c95a;
+  --input-border: #f0c95a;
+}
+
+/* FROST_BUDDY.EXE (6b) */
+[data-theme='frost'] {
+  --bg-window: #14102b;
+  --bg-panel: #201a44;
+  --bg-sidebar: #201a44;
+  --bg-skyline: #201a44;
+  --bg-item-active: #2c2360;
+  --accent: #7fd8ff;
+  --accent-2: #b98bff;
+  --text-primary: #eee7ff;
+  --status-online: #7fd8ff;
+  --status-away: #f0c95a;
+  --status-offline: #4a4470;
+}
+
+/* AMBER_GROVE.EXE (6c) */
+[data-theme='amber'] {
+  --bg-window: #0f1b14;
+  --bg-panel: #16281c;
+  --bg-sidebar: #16281c;
+  --bg-skyline: #16281c;
+  --bg-item-active: #1f3a27;
+  --accent: #ffb347;
+  --accent-2: #6fae66;
+  --text-primary: #eaf5ec;
+  --status-online: #6fae66;
+  --status-away: #ffb347;
+  --status-offline: #48594c;
+  --avatar-bg: #ffb347;
+}
+
+/* SLATE_LIME.EXE (7b) */
+[data-theme='slate'] {
+  --bg-window: #1a2028;
+  --bg-panel: #232b36;
+  --bg-sidebar: #232b36;
+  --bg-skyline: #232b36;
+  --bg-item-active: #2d3846;
+  --accent: #baff5c;
+  --accent-2: #5cc9ff;
+  --text-primary: #eef4f8;
+  --status-online: #baff5c;
+  --status-away: #ffd27a;
+  --status-offline: #4a5562;
+  --bubble-me-bg: #baff5c;
+}
+
+/* PHOSPHOR_TERM (1b) — zeleni CRT terminal */
+[data-theme='phosphor'] {
+  --bg-window: #03110a;
+  --bg-panel: #04180d;
+  --bg-sidebar: #03130b;
+  --bg-skyline: #04180d;
+  --bg-item-active: #0a2415;
+  --accent: #35ff6b;
+  --accent-2: #35ff6b;
+  --text-primary: #35ff6b;
+  --status-online: #35ff6b;
+  --status-away: #a8ff35;
+  --status-offline: #0f3a20;
+}
+
+/* ROSE_QUARTZ.EXE (7a) */
+[data-theme='rose'] {
+  --bg-window: #2a1620;
+  --bg-panel: #3a1e2c;
+  --bg-sidebar: #3a1e2c;
+  --bg-skyline: #3a1e2c;
+  --bg-item-active: #4a2638;
+  --accent: #ff8fa3;
+  --accent-2: #d4a5ff;
+  --text-primary: #ffeef2;
+  --status-online: #ff8fa3;
+  --status-away: #ffd27a;
+  --status-offline: #6a4a58;
+}

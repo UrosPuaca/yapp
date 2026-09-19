@@ -1,0 +1,48 @@
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 0.25rem solid var(--accent);
+  font-family: var(--font-pixel);
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+  background: var(--bg-panel);
+}
+
+.ctrls {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.ctrlDot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border: var(--border-thin);
+  background: var(--accent-2);
+}
+
+.titleText {
+  flex: 1;
+  letter-spacing: 0.0625rem;
+}
+
+.tag {
+  font-size: 0.625rem;
+  opacity: 0.8;
+  color: var(--accent);
+}
+
+.titleAction {
+  font-family: var(--font-pixel);
+  font-size: 0.625rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.titleAction:hover {
+  color: var(--accent-2);
+}

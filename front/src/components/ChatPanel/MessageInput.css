@@ -1,0 +1,66 @@
+.inputRow {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.625rem 0.625rem 1.125rem;
+  border-top: var(--border-thick);
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  height: 4.5rem;
+  box-sizing: border-box;
+}
+
+.textInput {
+  flex: 1;
+  font-family: var(--font-retro);
+  font-size: 1.125rem;
+  padding: 0.5rem 0.625rem;
+  border: 0.125rem solid var(--input-border);
+  outline: none;
+  background: var(--black);
+  color: var(--text-primary);
+}
+
+.sendBtn {
+  font-family: var(--font-pixel);
+  font-size: 0.6875rem;
+  padding: 0 1rem;
+  border: var(--border-thin);
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  background: var(--send-bg);
+  color: var(--bg-window);
+}
+
+.sendBtn:active {
+  box-shadow: none;
+  transform: translate(0.1875rem, 0.1875rem);
+}
+
+/* [+] i REC dugmad */
+.iconBtn {
+  font-family: var(--font-pixel);
+  font-size: 0.6875rem;
+  padding: 0 0.625rem;
+  border: var(--border-thin);
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  background: var(--bg-panel);
+  color: var(--accent);
+}
+
+.iconBtn:active {
+  box-shadow: none;
+  transform: translate(0.1875rem, 0.1875rem);
+}
+
+.iconBtn-rec {
+  background: var(--accent-2);
+  color: var(--bg-window);
+  animation: recBlink 1s steps(2, start) infinite;
+}
+
+@keyframes recBlink {
+  50% {
+    opacity: 0.55;
+  }
+}
